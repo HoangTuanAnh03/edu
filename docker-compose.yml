@@ -1,0 +1,26 @@
+services:
+  edudb:
+    image: mysql
+    container_name: edudb
+    ports:
+      - 3306:3306
+    environment:
+      MYSQL_DATABASE: edudb
+      MYSQL_ROOT_PASSWORD: root
+    networks:
+      - tuananh177
+
+  auth:
+    image: "tuananh177/edu_v2:v1.0"
+    container_name: EduV2
+    ports:
+      - "8080:8080"
+    environment:
+      SPRING_APPLICATION_NAME: "edu_v2"
+      SPRING_DATASOURCE_URL: "jdbc:mysql://edudb:3306/edudb"
+    networks:
+      - tuananh177
+
+networks:
+  tuananh177:
+    driver: "bridge"

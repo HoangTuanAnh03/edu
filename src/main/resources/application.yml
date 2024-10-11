@@ -5,7 +5,7 @@ spring:
     name: "edu_v2"
 
   datasource:
-    url: jdbc:mysql://localhost:3308/jobsdb
+    url: jdbc:mysql://localhost:3306/edudb
     username: root
     password: root
   jpa:
