@@ -1,17 +1,13 @@
 package com.huce.edu_v2.service;
 
-import com.huce.edu_v2.advice.exception.PermissionException;
-import com.huce.edu_v2.dto.request.CreateUserRequest;
-import com.huce.edu_v2.dto.request.PasswordCreationRequest;
-import com.huce.edu_v2.dto.request.UpdateUserRequest;
+import com.huce.edu_v2.dto.request.user.CreateUserRequest;
+import com.huce.edu_v2.dto.request.auth.PasswordCreationRequest;
+import com.huce.edu_v2.dto.request.user.UpdateUserRequest;
 import com.huce.edu_v2.dto.response.ResultPaginationDTO;
-import com.huce.edu_v2.dto.response.SimpInfoUserResponse;
-import com.huce.edu_v2.dto.response.UserResponse;
+import com.huce.edu_v2.dto.response.user.UserResponse;
 import com.huce.edu_v2.entity.User;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
-
-import java.util.List;
 
 public interface UserService {
     /**
@@ -74,6 +70,10 @@ public interface UserService {
      */
     boolean handleDeleteUser(String id);
 
+    /**
+     * @param email - Input is the email want to retrieve password
+     * @return boolean indicating is sending a password reset request acceptable?
+     */
     Boolean forgotPassword(String email);
 
 }

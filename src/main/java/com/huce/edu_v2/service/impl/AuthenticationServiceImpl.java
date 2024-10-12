@@ -3,9 +3,9 @@ package com.huce.edu_v2.service.impl;
 import com.huce.edu_v2.advice.AppException;
 import com.huce.edu_v2.advice.ErrorCode;
 import com.huce.edu_v2.advice.exception.ResourceNotFoundException;
-import com.huce.edu_v2.dto.request.AuthenticationRequest;
-import com.huce.edu_v2.dto.request.ExchangeTokenRequest;
-import com.huce.edu_v2.dto.response.AuthenticationResponse;
+import com.huce.edu_v2.dto.request.auth.AuthenticationRequest;
+import com.huce.edu_v2.dto.request.auth.ExchangeTokenRequest;
+import com.huce.edu_v2.dto.response.auth.AuthenticationResponse;
 import com.huce.edu_v2.entity.InvalidatedToken;
 import com.huce.edu_v2.entity.Role;
 import com.huce.edu_v2.entity.User;
@@ -37,28 +37,28 @@ import java.util.Date;
 @RequiredArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
 public class AuthenticationServiceImpl implements AuthenticationService {
-    @NonFinal
-    protected final String GRANT_TYPE = "authorization_code";
     AuthenticationManagerBuilder authenticationManagerBuilder;
     UserRepository userRepository;
     InvalidatedTokenService invalidatedTokenService;
     SecurityUtil securityUtil;
     OutboundUserClient outboundUserClient;
     RoleRepository roleRepository;
+
+    @NonFinal
+    protected final String GRANT_TYPE = "authorization_code";
+
     @NonFinal
     @Value("${auth.outbound.identity.client-id}")
     protected String CLIENT_ID;
+
     @NonFinal
     @Value("${auth.outbound.identity.client-secret}")
     protected String CLIENT_SECRET;
+
     @NonFinal
     @Value("${auth.outbound.identity.redirect-uri}")
     protected String REDIRECT_URI;
 
-    /**
-     * @param request -AuthenticationRequest Object
-     * @return User Details based on a given email and password
-     */
     @Override
     public AuthenticationResponse authenticate(AuthenticationRequest request) {
         UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(
@@ -76,9 +76,6 @@ public class AuthenticationServiceImpl implements AuthenticationService {
         return createAuthenticationResponse(user);
     }
 
-    /**
-     * @param refreshToken - refreshToken get from cookie
-     */
     @Override
     public void logout(String refreshToken) throws ParseException, JOSEException {
         var signToken = securityUtil.verifyToken(refreshToken);
@@ -92,10 +89,6 @@ public class AuthenticationServiceImpl implements AuthenticationService {
         invalidatedTokenService.createInvalidatedToken(invalidatedToken);
     }
 
-    /**
-     * @param refreshToken - refreshToken get from cookie
-     * @return User Details based on a given refreshToken
-     */
     @Override
     public AuthenticationResponse refreshToken(String refreshToken) throws ParseException, JOSEException {
         var signedJWT = securityUtil.verifyToken(refreshToken);
@@ -115,10 +108,6 @@ public class AuthenticationServiceImpl implements AuthenticationService {
         return createAuthenticationResponse(user);
     }
 
-    /**
-     * @param user - User Object
-     * @return Convert User Object to InfoAuthenticationDTO Object
-     */
     @Override
     public AuthenticationResponse createAuthenticationResponse(User user) {
         var accessToken = securityUtil.generateToken(user, false);
@@ -139,11 +128,6 @@ public class AuthenticationServiceImpl implements AuthenticationService {
                 .build();
     }
 
-
-    /**
-     * @param code
-     * @return
-     */
     @Override
     public AuthenticationResponse outboundAuthenticate(String code) {
         var response = outboundUserClient.exchangeToken(ExchangeTokenRequest.builder()

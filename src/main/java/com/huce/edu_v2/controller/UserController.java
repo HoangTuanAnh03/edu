@@ -1,12 +1,12 @@
 package com.huce.edu_v2.controller;
 
 import com.huce.edu_v2.dto.ApiResponse;
-import com.huce.edu_v2.dto.request.ForgotPasswordRequest;
-import com.huce.edu_v2.dto.request.PasswordCreationRequest;
-import com.huce.edu_v2.dto.request.UpdateUserRequest;
-import com.huce.edu_v2.dto.response.AuthenticationResponse;
+import com.huce.edu_v2.dto.request.auth.ForgotPasswordRequest;
+import com.huce.edu_v2.dto.request.auth.PasswordCreationRequest;
+import com.huce.edu_v2.dto.request.user.UpdateUserRequest;
+import com.huce.edu_v2.dto.response.auth.AuthenticationResponse;
 import com.huce.edu_v2.dto.response.ResultPaginationDTO;
-import com.huce.edu_v2.dto.response.UserResponse;
+import com.huce.edu_v2.dto.response.user.UserResponse;
 import com.huce.edu_v2.entity.User;
 import com.huce.edu_v2.service.UserService;
 import com.huce.edu_v2.util.constant.AppConstants;

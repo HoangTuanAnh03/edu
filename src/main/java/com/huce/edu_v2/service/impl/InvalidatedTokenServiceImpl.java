@@ -14,18 +14,11 @@ import org.springframework.stereotype.Service;
 public class InvalidatedTokenServiceImpl implements InvalidatedTokenService {
     InvalidatedTokenRepository invalidatedTokenRepository;
 
-    /**
-     * @param invalidatedToken - Input InvalidatedToken Object
-     */
     @Override
     public void createInvalidatedToken(InvalidatedToken invalidatedToken){
         invalidatedTokenRepository.save(invalidatedToken);
     }
 
-    /**
-     * @param id - Input invalidatedTokenId
-     * @return boolean indicating if the id already exited or not
-     */
     @Override
     public boolean existById(String id){
         return invalidatedTokenRepository.existsById(id);

@@ -1,4 +1,4 @@
-package com.huce.edu_v2.dto.request;
+package com.huce.edu_v2.dto.request.user;
 
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;

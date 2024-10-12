@@ -1,4 +1,4 @@
-package com.huce.edu_v2.dto.response;
+package com.huce.edu_v2.dto.response.auth;
 
 import lombok.*;
 import lombok.experimental.FieldDefaults;

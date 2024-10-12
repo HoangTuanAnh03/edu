@@ -1,6 +1,6 @@
 package com.huce.edu_v2.service;
 
-import com.huce.edu_v2.dto.request.VerifyNewPasswordRequest;
+import com.huce.edu_v2.dto.request.auth.VerifyNewPasswordRequest;
 import com.huce.edu_v2.entity.User;
 import com.huce.edu_v2.entity.VerificationCode;
 

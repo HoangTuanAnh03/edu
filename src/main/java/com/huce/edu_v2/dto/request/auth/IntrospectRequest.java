@@ -1,4 +1,4 @@
-package com.huce.edu_v2.dto.response;
+package com.huce.edu_v2.dto.request.auth;
 
 import lombok.*;
 import lombok.experimental.FieldDefaults;
@@ -8,7 +8,6 @@ import lombok.experimental.FieldDefaults;
 @AllArgsConstructor
 @Builder
 @FieldDefaults(level = AccessLevel.PRIVATE)
-public class InfoAuthenticationDTO {
-    String refreshToken;
-    AuthenticationResponse authenticationResponse;
+public class IntrospectRequest {
+    String token;
 }

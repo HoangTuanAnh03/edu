@@ -1,7 +1,7 @@
 package com.huce.edu_v2.service;
 
-import com.huce.edu_v2.dto.request.AuthenticationRequest;
-import com.huce.edu_v2.dto.response.AuthenticationResponse;
+import com.huce.edu_v2.dto.request.auth.AuthenticationRequest;
+import com.huce.edu_v2.dto.response.auth.AuthenticationResponse;
 import com.huce.edu_v2.entity.User;
 import com.nimbusds.jose.JOSEException;
 
@@ -31,6 +31,10 @@ public interface AuthenticationService {
      */
     AuthenticationResponse createAuthenticationResponse(User user);
 
+    /**
+     * @param code - Input is the code given by the third party
+     * @return Convert User Object to InfoAuthenticationDTO Object
+     */
     AuthenticationResponse outboundAuthenticate(String code);
 
 }

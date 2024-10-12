@@ -12,10 +12,7 @@ import org.springframework.stereotype.Service;
 @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
 public class RoleServiceImpl implements RoleService {
     RoleRepository roleRepository;
-    /**
-     * @param name - Role name
-     * @return boolean indicating if the name already exited or not
-     */
+
     @Override
     public boolean existByName(String name) {
         return this.roleRepository.existsByName(name);

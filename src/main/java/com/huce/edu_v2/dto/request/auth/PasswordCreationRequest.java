@@ -1,4 +1,4 @@
-package com.huce.edu_v2.dto.request;
+package com.huce.edu_v2.dto.request.auth;
 
 import jakarta.validation.constraints.Size;
 import lombok.*;

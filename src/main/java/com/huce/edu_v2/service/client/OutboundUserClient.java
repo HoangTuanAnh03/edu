@@ -1,9 +1,9 @@
 package com.huce.edu_v2.service.client;
 
 
-import com.huce.edu_v2.dto.request.ExchangeTokenRequest;
-import com.huce.edu_v2.dto.response.ExchangeTokenResponse;
-import com.huce.edu_v2.dto.response.OutboundUserResponse;
+import com.huce.edu_v2.dto.request.auth.ExchangeTokenRequest;
+import com.huce.edu_v2.dto.response.auth.ExchangeTokenResponse;
+import com.huce.edu_v2.dto.response.auth.OutboundUserResponse;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;

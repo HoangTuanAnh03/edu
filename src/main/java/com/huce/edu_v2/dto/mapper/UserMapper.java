@@ -1,7 +1,7 @@
 package com.huce.edu_v2.dto.mapper;
 
-import com.huce.edu_v2.dto.response.SimpInfoUserResponse;
-import com.huce.edu_v2.dto.response.UserResponse;
+import com.huce.edu_v2.dto.response.user.SimpInfoUserResponse;
+import com.huce.edu_v2.dto.response.user.UserResponse;
 import com.huce.edu_v2.entity.User;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;

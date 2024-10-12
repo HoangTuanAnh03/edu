@@ -3,7 +3,7 @@ package com.huce.edu_v2.service.impl;
 import com.huce.edu_v2.advice.AppException;
 import com.huce.edu_v2.advice.ErrorCode;
 import com.huce.edu_v2.advice.exception.ResourceNotFoundException;
-import com.huce.edu_v2.dto.request.VerifyNewPasswordRequest;
+import com.huce.edu_v2.dto.request.auth.VerifyNewPasswordRequest;
 import com.huce.edu_v2.entity.User;
 import com.huce.edu_v2.entity.VerificationCode;
 import com.huce.edu_v2.repository.UserRepository;
