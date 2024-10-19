@@ -1,13 +1,14 @@
 package com.huce.edu_v2.service;
 
-import com.huce.edu_v2.entity.InvalidatedToken;
+import com.huce.edu_v2.dto.request.auth.InvalidatedTokenRequest;
+import com.huce.edu_v2.service.base.BaseRedisServiceV2;
 
-public interface InvalidatedTokenService {
+public interface InvalidatedTokenService extends BaseRedisServiceV2<String, String, String> {
 
      /**
-      * @param invalidatedToken - Input InvalidatedToken Object
+      * @param invalidatedTokenRequest - Input InvalidatedTokenRequest Object
       */
-     void createInvalidatedToken(InvalidatedToken invalidatedToken);
+     void createInvalidatedToken(InvalidatedTokenRequest invalidatedTokenRequest);
 
      /**
       * @param id - Input invalidatedTokenId

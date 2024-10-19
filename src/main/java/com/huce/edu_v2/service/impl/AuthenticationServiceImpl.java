@@ -5,8 +5,8 @@ import com.huce.edu_v2.advice.ErrorCode;
 import com.huce.edu_v2.advice.exception.ResourceNotFoundException;
 import com.huce.edu_v2.dto.request.auth.AuthenticationRequest;
 import com.huce.edu_v2.dto.request.auth.ExchangeTokenRequest;
+import com.huce.edu_v2.dto.request.auth.InvalidatedTokenRequest;
 import com.huce.edu_v2.dto.response.auth.AuthenticationResponse;
-import com.huce.edu_v2.entity.InvalidatedToken;
 import com.huce.edu_v2.entity.Role;
 import com.huce.edu_v2.entity.User;
 import com.huce.edu_v2.repository.RoleRepository;
@@ -83,10 +83,10 @@ public class AuthenticationServiceImpl implements AuthenticationService {
         String jit = signToken.getJWTClaimsSet().getJWTID();
         Date expiryTime = signToken.getJWTClaimsSet().getExpirationTime();
 
-        InvalidatedToken invalidatedToken =
-                InvalidatedToken.builder().id(jit).expiryTime(expiryTime).build();
+        InvalidatedTokenRequest invalidatedTokenRequest =
+                InvalidatedTokenRequest.builder().id(jit).expiryTime(expiryTime.toInstant()).build();
 
-        invalidatedTokenService.createInvalidatedToken(invalidatedToken);
+        invalidatedTokenService.createInvalidatedToken(invalidatedTokenRequest);
     }
 
     @Override
@@ -96,10 +96,10 @@ public class AuthenticationServiceImpl implements AuthenticationService {
         var jit = signedJWT.getJWTClaimsSet().getJWTID();
         var expiryTime = signedJWT.getJWTClaimsSet().getExpirationTime();
 
-        InvalidatedToken invalidatedToken =
-                InvalidatedToken.builder().id(jit).expiryTime(expiryTime).build();
+        InvalidatedTokenRequest invalidatedTokenRequest =
+                InvalidatedTokenRequest.builder().id(jit).expiryTime(expiryTime.toInstant()).build();
 
-        invalidatedTokenService.createInvalidatedToken(invalidatedToken);
+        invalidatedTokenService.createInvalidatedToken(invalidatedTokenRequest);
 
         var username = signedJWT.getJWTClaimsSet().getSubject();
         var user = userRepository.findByEmail(username)

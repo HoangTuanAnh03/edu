@@ -1,3 +1,4 @@
+version: "3.8"
 services:
   edudb:
     image: mysql
@@ -9,6 +10,28 @@ services:
       MYSQL_ROOT_PASSWORD: root
     networks:
       - tuananh177
+    healthcheck:
+      test: ["CMD-SHELL", "mysqladmin ping -h localhost -uroot -proot || exit 1"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 30s
+
+  redis-stack:
+    image: redis/redis-stack:latest
+    container_name: redis-stack
+    ports:
+      - "6379:6379"
+      - "8001:8001"
+    restart: always
+    networks:
+      - tuananh177
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 30s
 
   kafka:
     image: 'bitnami/kafka:3.7.0'
@@ -26,8 +49,14 @@ services:
       - KAFKA_CFG_CONTROLLER_LISTENER_NAMES=CONTROLLER
     networks:
       - tuananh177
+    healthcheck:
+      test: ["CMD-SHELL", "kafka-topics.sh --list --bootstrap-server localhost:9092 || exit 1"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 30s
 
-  auth:
+  edu:
     image: "tuananh177/edu_v2:v1.0"
     container_name: EduV2
     ports:
@@ -36,11 +65,17 @@ services:
       SPRING_APPLICATION_NAME: "edu_v2"
       SPRING_DATASOURCE_URL: "jdbc:mysql://edudb:3306/edudb"
       SPRING_KAFKA_BOOTSTRAP_SERVERS: kafka:9094
+      REDIS_HOST: redis-stack
+      REDIS_PORT: 6379
     networks:
       - tuananh177
     depends_on:
-      - edudb
-      - kafka
+      edudb:
+        condition: service_healthy
+      kafka:
+        condition: service_healthy
+      redis-stack:
+        condition: service_healthy
 
 networks:
   tuananh177:

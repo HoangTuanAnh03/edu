@@ -25,7 +25,8 @@ public class SecurityConfiguration {
             "/users/forgotPassword",
             "/users/fetchUserById",
             "/auth/**",
-            "/v3/api-docs/**", "/swagger-ui/**", "/swagger-ui/index.html#/"
+            "/v3/api-docs/**", "/swagger-ui/**", "/swagger-ui/index.html#/",
+            "/redis/**"
     };
 
     @Bean
