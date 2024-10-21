@@ -54,17 +54,17 @@ public class UserController {
                 .build();
     }
 
-    @GetMapping("")
-    public ApiResponse<ResultPaginationDTO> getAllUser(
-            @Filter Specification<User> spec,
-            Pageable pageable) {
-
-        return ApiResponse.<ResultPaginationDTO>builder()
-                .code(HttpStatus.OK.value())
-                .message("Fetch all users")
-                .data(this.userService.fetchAllUser(spec, pageable))
-                .build();
-    }
+//    @GetMapping("")
+//    public ApiResponse<ResultPaginationDTO> getAllUser(
+//            @Filter Specification<User> spec,
+//            Pageable pageable) {
+//
+//        return ApiResponse.<ResultPaginationDTO>builder()
+//                .code(HttpStatus.OK.value())
+//                .message("Fetch all users")
+//                .data(this.userService.fetchAllUser(spec, pageable))
+//                .build();
+//    }
 
 
     @PutMapping("/{id}")
