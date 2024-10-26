@@ -162,4 +162,20 @@ public class SecurityUtil {
 
     private record TokenInfo(String token, Date expiryDate) {
     }
+
+    public String getUuid(SignedJWT signedJWT) throws ParseException {
+        try {
+            return signedJWT.getJWTClaimsSet().getClaim("uid").toString();
+        } catch (ParseException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    public String getRole(SignedJWT signedJWT) {
+        try {
+            return signedJWT.getJWTClaimsSet().getClaim("scope").toString();
+        } catch (ParseException e) {
+            throw new RuntimeException(e);
+        }
+    }
 }

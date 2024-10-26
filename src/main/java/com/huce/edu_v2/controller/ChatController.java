@@ -1,51 +1,41 @@
 package com.huce.edu_v2.controller;
 
-import com.huce.edu_v2.entity.ChatEntity;
+import com.huce.edu_v2.dto.ApiResponse;
+import com.huce.edu_v2.dto.response.chat.UserResponse;
+import com.huce.edu_v2.entity.Chat;
 import com.huce.edu_v2.service.ChatService;
+import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
-import org.springframework.context.annotation.Configuration;
-import org.springframework.http.ResponseEntity;
-import org.springframework.stereotype.Controller;
+import lombok.experimental.FieldDefaults;
+import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
-@Controller
-@RequestMapping("")
+@RestController
+@RequestMapping("/infoChat")
 @AllArgsConstructor
-//@CrossOrigin("*")
+@FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
 public class ChatController {
-	final ChatService chatService;
-	@GetMapping("/")
-	public String hello(){
-		return "hello";
-	}
-
-	@GetMapping("/users")
-	public ResponseEntity<List<Long>> getAllUsers() {
-		List<Long> userIds = chatService.getAllUsers();
-		return ResponseEntity.ok(userIds);
-	}
+	ChatService chatService;
 
 	@GetMapping("/users/getAllUserIdsAndLatestMessage")
-	public ResponseEntity<List<Map<Object, Object>>> getAllUserIdsAndLatestMessage(){
-		List<Object[]> res = chatService.findAllUserIdsAndLatestMessage();
-		List<Map<Object, Object>> allUserIdAndLatestMessage = new ArrayList<>();
-		res.stream().forEach(t -> {
-			Map<Object, Object> userIdAndLatestMessage = new HashMap<>();
-			userIdAndLatestMessage.put("id", t[0]);
-			userIdAndLatestMessage.put("message", t[1]);
-			allUserIdAndLatestMessage.add(userIdAndLatestMessage);
-		});
-		return ResponseEntity.ok(allUserIdAndLatestMessage);
+	public ApiResponse<List<UserResponse>> getAllUserIdsAndLatestMessage(){
+		List<UserResponse> res = chatService.findAllUserIdsAndLatestMessage();
+		return ApiResponse.<List<UserResponse>>builder()
+				.code(HttpStatus.OK.value())
+				.message("Fetch all userIds and latest message")
+				.data(res)
+				.build();
 	}
 
 	@GetMapping("/messages/{userId}")
-	public ResponseEntity<List<ChatEntity>> getMessagesByUserId(@PathVariable Long userId) {
-		List<ChatEntity> messages = chatService.getMessagesByUserId(userId);
-		return ResponseEntity.ok(messages);
+	public ApiResponse<List<Chat>> getMessagesByUserId(@PathVariable String userId) {
+		List<Chat> messages = chatService.getMessagesByUserId(userId);
+		return ApiResponse.<List<Chat>>builder()
+				.code(HttpStatus.OK.value())
+				.message("Fetch all message by userid")
+				.data(messages)
+				.build();
 	}
 }

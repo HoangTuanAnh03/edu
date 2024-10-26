@@ -1,10 +1,11 @@
 package com.huce.edu_v2.controller;
 
-import com.huce.edu_v2.entity.ChatEntity;
-import com.huce.edu_v2.repository.ChatRepository;
+import com.huce.edu_v2.dto.request.chat.MessageRequest;
+import com.huce.edu_v2.entity.Chat;
 import com.huce.edu_v2.service.ChatService;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
+import lombok.SneakyThrows;
 import lombok.experimental.FieldDefaults;
 import org.springframework.messaging.handler.annotation.DestinationVariable;
 import org.springframework.messaging.handler.annotation.MessageMapping;
@@ -19,21 +20,19 @@ import org.springframework.web.bind.annotation.RestController;
 @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
 public class WebSocketChatController {
 	SimpMessagingTemplate messagingTemplate;
-	 ChatRepository chatRepository;
-	 ChatService chatService;
+	ChatService chatService;
 
 	@MessageMapping("/userToAdmin")
 	@SendTo("/topic/admin")
-	public ChatEntity sendToAdmin(ChatEntity chat) {
-		chat.setSenderId(chat.getUserId());
-		chatRepository.save(chat);
-		return chat;
+	public Chat sendToAdmin(MessageRequest messageRequest) {
+		return chatService.sendMessageToAdmin(messageRequest);
 	}
 
-	@MessageMapping("/adminToUser/{userId}")
-	public void sendToUser(@DestinationVariable Long userId, ChatEntity chat) {
-		chatService.sendMessageToUser(userId, chat);
-		messagingTemplate.convertAndSend("/topic/user/" + userId, chat);
-		messagingTemplate.convertAndSend("/topic/admin", chat);
+	@SneakyThrows
+    @MessageMapping("/adminToUser/{userId}")
+	public void sendToUser(@DestinationVariable String userId, MessageRequest messageRequest) {
+		Chat chatResponse = chatService.sendMessageToUser(userId, messageRequest);
+		messagingTemplate.convertAndSend("/topic/user/" + userId, chatResponse);
+		messagingTemplate.convertAndSend("/topic/admin", chatResponse);
 	}
 }

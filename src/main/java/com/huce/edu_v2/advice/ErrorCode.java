@@ -13,7 +13,7 @@ public enum ErrorCode {
     INVALID_PASSWORD(1004, "Password must be at least {min} characters", HttpStatus.BAD_REQUEST),
     USER_NOT_EXISTED(404, "User not existed", HttpStatus.NOT_FOUND),
     UNAUTHENTICATED(401, "Unauthenticated1", HttpStatus.UNAUTHORIZED),
-    UNAUTHORIZED(401, "You do not have permission", HttpStatus.FORBIDDEN),
+    UNAUTHORIZED(403, "You do not have permission", HttpStatus.FORBIDDEN),
     INVALID_DOB(1008, "Your age must be at least {min}", HttpStatus.BAD_REQUEST),
     PASSWORD_EXISTED(400, "Password existed", HttpStatus.BAD_REQUEST),
     LOGIN_WITH_GOOGLE(1404, "The account is registered using the google method", HttpStatus.BAD_REQUEST),

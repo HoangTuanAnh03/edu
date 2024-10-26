@@ -15,26 +15,21 @@ import java.time.LocalDateTime;
 @FieldDefaults(level = AccessLevel.PRIVATE)
 @Entity
 @Table(name = "chat")
-public class ChatEntity {
+public class Chat {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	private Long id;
+	Long id;
 
 	@Enumerated(EnumType.STRING)
-	@Column(name = "sender_type", nullable = false)
-	private SenderType senderType;
+	SenderType senderType;
 
-	@Column(name = "sender_id", nullable = false)
-	private Long senderId;
+	String senderId;
 
-	@Column(name = "user_id", nullable = false)
-	private Long userId;
+	String recipientId;
 
-	@Column(name = "message", nullable = false)
-	private String message;
+	String message;
 
-	@Column(name = "timestamp", nullable = false)
-	private LocalDateTime timestamp;
+	LocalDateTime timestamp;
 
 	@PrePersist
 	protected void onCreate() {

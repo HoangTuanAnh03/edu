@@ -13,9 +13,6 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.oauth2.server.resource.authentication.JwtAuthenticationConverter;
 import org.springframework.security.oauth2.server.resource.authentication.JwtGrantedAuthoritiesConverter;
 import org.springframework.security.web.SecurityFilterChain;
-import org.springframework.web.cors.CorsConfiguration;
-import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
-import org.springframework.web.filter.CorsFilter;
 
 @Configuration
 @EnableWebSecurity
@@ -28,19 +25,21 @@ public class SecurityConfiguration {
             "/v3/api-docs/**", "/swagger-ui/**", "/swagger-ui/index.html#/",
             "/redis/**",
             "/ws/**",
+//            "/infoChat/**",
             "/chat/**",
     };
 
 //    @Bean
-//    public CorsFilter corsFilter() {
+//    public CorsConfigurationSource corsConfigurationSource() {
+//        CorsConfiguration configuration = new CorsConfiguration();
+//        configuration.setAllowedOrigins(Collections.singletonList("*"));
+//        configuration.setAllowedMethods(Collections.singletonList("*"));
+//        configuration.setAllowedHeaders(Collections.singletonList("*"));
 //        UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
-//        CorsConfiguration config = new CorsConfiguration();
-//        config.addAllowedOrigin("*");
-//        config.addAllowedHeader("*");
-//        config.addAllowedMethod("*");
-//        source.registerCorsConfiguration("/**", config);
-//        return new CorsFilter(source);
+//        source.registerCorsConfiguration("/**", configuration);
+//        return source;
 //    }
+
 
     private final CustomJwtDecoder customJwtDecoder;
 
@@ -56,20 +55,23 @@ public class SecurityConfiguration {
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity httpSecurity,
                                            CustomAuthenticationEntryPoint customAuthenticationEntryPoint) throws Exception {
-        httpSecurity.authorizeHttpRequests(request -> request.requestMatchers(PUBLIC_ENDPOINTS)
-                .permitAll()
+        httpSecurity.csrf(AbstractHttpConfigurer::disable)
+//                    .cors(AbstractHttpConfigurer::disable)
+                    .authorizeHttpRequests(request -> request.requestMatchers(PUBLIC_ENDPOINTS)
+                        .permitAll()
 
-                .requestMatchers(HttpMethod.GET, "/users").hasAuthority(PredefinedRole.ROLE_ADMIN)
-                .requestMatchers(HttpMethod.POST, "/users/create-password").hasAuthority(PredefinedRole.ROLE_USER)
-                .requestMatchers(HttpMethod.DELETE, "/users/*").hasAuthority(PredefinedRole.ROLE_ADMIN)
+                        .requestMatchers(HttpMethod.GET, "/users").hasAuthority(PredefinedRole.ROLE_ADMIN)
+                        .requestMatchers(HttpMethod.POST, "/users/create-password").hasAuthority(PredefinedRole.ROLE_USER)
+                        .requestMatchers(HttpMethod.DELETE, "/users/*").hasAuthority(PredefinedRole.ROLE_ADMIN)
 
-                .anyRequest().permitAll());
+                       .requestMatchers(HttpMethod.GET, "/users/getAllUserIdsAndLatestMessage").hasAuthority(PredefinedRole.ROLE_ADMIN)
 
-        httpSecurity.oauth2ResourceServer(oauth2 -> oauth2.jwt(jwtConfigurer -> jwtConfigurer
+                         .anyRequest().authenticated())
+
+                    .oauth2ResourceServer(oauth2 -> oauth2.jwt(jwtConfigurer -> jwtConfigurer
                         .decoder(customJwtDecoder)
                         .jwtAuthenticationConverter(jwtAuthenticationConverter()))
-                .authenticationEntryPoint(customAuthenticationEntryPoint));
-        httpSecurity.csrf(AbstractHttpConfigurer::disable);
+                        .authenticationEntryPoint(customAuthenticationEntryPoint));
 
         return httpSecurity.build();
     }

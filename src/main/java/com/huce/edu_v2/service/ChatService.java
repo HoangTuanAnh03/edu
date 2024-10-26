@@ -1,15 +1,17 @@
 package com.huce.edu_v2.service;
 
-import com.huce.edu_v2.entity.ChatEntity;
-import org.springframework.stereotype.Service;
+import com.huce.edu_v2.dto.request.chat.MessageRequest;
+import com.huce.edu_v2.dto.response.chat.UserResponse;
+import com.huce.edu_v2.entity.Chat;
 
 import java.util.List;
 
 public interface ChatService {
-	public List<Long> getAllUsers();
+	List<Chat> getMessagesByUserId(String userId);
 
-	public List<ChatEntity> getMessagesByUserId(Long userId);
+	List<UserResponse> findAllUserIdsAndLatestMessage();
 
-	public List<Object[]> findAllUserIdsAndLatestMessage();
-	public void sendMessageToUser(Long userId, ChatEntity message);
+	Chat sendMessageToUser(String userId, MessageRequest messageRequest);
+
+	Chat sendMessageToAdmin(MessageRequest messageRequest);
 }
