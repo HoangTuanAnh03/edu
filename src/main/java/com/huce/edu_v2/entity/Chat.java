@@ -1,5 +1,6 @@
 package com.huce.edu_v2.entity;
 
+import com.huce.edu_v2.util.constant.ChatStatusEnum;
 import com.huce.edu_v2.util.constant.SenderType;
 import jakarta.persistence.*;
 import lombok.*;
@@ -23,13 +24,16 @@ public class Chat {
 	@Enumerated(EnumType.STRING)
 	SenderType senderType;
 
-	String senderId;
+	String userId;
 
-	String recipientId;
+	String adminId;
 
 	String message;
 
 	LocalDateTime timestamp;
+
+	@Enumerated(EnumType.STRING)
+	ChatStatusEnum status;
 
 	@PrePersist
 	protected void onCreate() {

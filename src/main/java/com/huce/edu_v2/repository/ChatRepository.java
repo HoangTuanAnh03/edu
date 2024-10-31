@@ -6,17 +6,20 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
+import java.util.Optional;
 
 @Repository
 public interface ChatRepository extends JpaRepository<Chat, Long> {
-	List<Chat> findByRecipientIdOrSenderId(String recipientId, String senderId);
+	List<Chat> findByUserIdOrAdminId(String userId, String adminId);
 
-	@Query("SELECT cm.senderId, cm.recipientId, cm.message " +
-			"FROM Chat cm " +
-			"WHERE cm.timestamp = (SELECT MAX(subcm.timestamp) " +
-			"FROM Chat subcm WHERE " +
-			"subcm.recipientId = cm.recipientId ) " +
-			"ORDER BY cm.timestamp DESC")
+	List<Chat> findByUserId(String userId);
+
+	@Query("SELECT cm.id " +
+            "FROM Chat cm " +
+            "WHERE cm.timestamp = (SELECT MAX(subcm.timestamp) " +
+            "FROM Chat subcm WHERE " +
+            "subcm.userId = cm.userId ) " +
+            "ORDER BY cm.timestamp DESC")
 	List<Object[]> findAllUserIdsAndLatestMessage();
 
 }

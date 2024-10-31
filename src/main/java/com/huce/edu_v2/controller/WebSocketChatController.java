@@ -1,7 +1,7 @@
 package com.huce.edu_v2.controller;
 
 import com.huce.edu_v2.dto.request.chat.MessageRequest;
-import com.huce.edu_v2.entity.Chat;
+import com.huce.edu_v2.dto.response.chat.ChatResponse;
 import com.huce.edu_v2.service.ChatService;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
@@ -24,14 +24,14 @@ public class WebSocketChatController {
 
 	@MessageMapping("/userToAdmin")
 	@SendTo("/topic/admin")
-	public Chat sendToAdmin(MessageRequest messageRequest) {
+	public ChatResponse sendToAdmin(MessageRequest messageRequest) {
 		return chatService.sendMessageToAdmin(messageRequest);
 	}
 
 	@SneakyThrows
     @MessageMapping("/adminToUser/{userId}")
 	public void sendToUser(@DestinationVariable String userId, MessageRequest messageRequest) {
-		Chat chatResponse = chatService.sendMessageToUser(userId, messageRequest);
+		ChatResponse chatResponse = chatService.sendMessageToUser(userId, messageRequest);
 		messagingTemplate.convertAndSend("/topic/user/" + userId, chatResponse);
 		messagingTemplate.convertAndSend("/topic/admin", chatResponse);
 	}

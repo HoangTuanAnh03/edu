@@ -230,4 +230,14 @@ public class UserServiceImpl implements UserService {
                 .exp(LocalDateTime.now()).build());
         return true;
     }
+
+    @Override
+    public void setAvatar(String id, String avatar) {
+        User user = userRepository.findById(id).orElseThrow(
+                () -> new AppException(ErrorCode.USER_NOT_EXISTED)
+        );
+
+        user.setImage(avatar);
+        userRepository.save(user);
+    }
 }

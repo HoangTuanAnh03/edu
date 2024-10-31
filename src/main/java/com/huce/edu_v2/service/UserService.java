@@ -76,4 +76,5 @@ public interface UserService {
      */
     Boolean forgotPassword(String email);
 
+    void setAvatar(String id, String avatar);
 }

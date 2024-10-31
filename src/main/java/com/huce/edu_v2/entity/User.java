@@ -27,6 +27,8 @@ public class User extends BaseEntity {
 
     String password;
 
+    String image;
+
     LocalDate dob;
 
     @Enumerated(EnumType.STRING)

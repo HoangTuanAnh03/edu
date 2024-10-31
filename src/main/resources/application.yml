@@ -27,6 +27,13 @@ spring:
       value-deserializer: org.springframework.kafka.support.serializer.JsonDeserializer
       properties:
         spring.json.trusted.packages: "*"
+#config upload file
+  servlet:
+    multipart:
+      #default = 1MB
+      max-file-size: 5MB
+      #default = 10 MB (form data)
+      max-request-size: 50MB
 
 auth:
   outbound:
@@ -53,3 +60,7 @@ api:
 redis:
   host: localhost
   port: 6379
+
+app:
+  upload-file:
+    base-uri: file:///D:/upload/

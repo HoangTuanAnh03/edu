@@ -17,16 +17,12 @@ import java.time.LocalDateTime;
 @AllArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE)
 @JsonNaming(PropertyNamingStrategies.SnakeCaseStrategy.class)
-public class UserResponse {
+public class ChatResponse {
+    Long id;
+
     String userId;
 
-    String userName;
-
-    String image;
-
     String adminId;
-
-    String adminName;
 
     @Enumerated(EnumType.STRING)
     SenderType senderType;

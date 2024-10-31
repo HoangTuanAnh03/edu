@@ -74,6 +74,16 @@ public class GlobalException {
     }
 
     @ExceptionHandler(value = {
+            StorageException.class,
+    })
+    public ResponseEntity<ApiResponse<Object>> handleFileUploadException(Exception ex) {
+        ApiResponse<Object> apiResponse = new ApiResponse<Object>();
+        apiResponse.setCode(HttpStatus.BAD_REQUEST.value());
+        apiResponse.setMessage(ex.getMessage());
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(apiResponse);
+    }
+
+    @ExceptionHandler(value = {
             PermissionException.class,
     })
     public ResponseEntity<ApiResponse<Object>> handlePermissionException(Exception ex) {

@@ -29,6 +29,7 @@ public class UserMapper {
                 .address(user.getAddress())
                 .email(user.getEmail())
                 .role(roleUser)
+                .image(user.getImage())
                 .noPassword(!StringUtils.hasText(user.getPassword()))
                 .createdAt(user.getCreatedAt())
                 .updatedAt(user.getUpdatedAt())

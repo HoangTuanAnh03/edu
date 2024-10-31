@@ -32,6 +32,8 @@ public class UserResponse {
 
     RoleUser role;
 
+    String image;
+
     @Data
     @NoArgsConstructor
     @AllArgsConstructor

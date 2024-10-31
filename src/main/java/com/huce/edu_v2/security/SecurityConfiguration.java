@@ -26,6 +26,7 @@ public class SecurityConfiguration {
             "/redis/**",
             "/ws/**",
 //            "/infoChat/**",
+            "/storage/**",
             "/chat/**",
     };
 
