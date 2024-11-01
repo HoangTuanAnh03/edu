@@ -22,7 +22,7 @@ public class CustomJwtDecoder implements JwtDecoder {
     @Override
     public Jwt decode(String token) throws JwtException {
         try {
-            SignedJWT signedJWT = securityUtil.verifyToken(token);
+            SignedJWT signedJWT = securityUtil.verifyToken(token, false);
 
             return new Jwt(token,
                     signedJWT.getJWTClaimsSet().getIssueTime().toInstant(),

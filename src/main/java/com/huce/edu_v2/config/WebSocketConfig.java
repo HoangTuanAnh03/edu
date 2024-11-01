@@ -85,7 +85,7 @@ public class WebSocketConfig implements WebSocketMessageBrokerConfigurer {
     private SignedJWT verifyToken(StompHeaderAccessor accessor) {
         String list = accessor.getNativeHeader("token").get(0).toString();
         try {
-            return securityUtil.verifyToken(list);
+            return securityUtil.verifyToken(list, false);
         } catch (ParseException | JOSEException e) {
             throw new AppException(ErrorCode.UNAUTHENTICATED);
         }

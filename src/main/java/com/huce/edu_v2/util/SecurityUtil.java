@@ -38,8 +38,12 @@ public class SecurityUtil {
     InvalidatedTokenService invalidatedTokenService;
 
     @NonFinal
-    @Value("${auth.jwt.signerKey}")
-    String SIGNER_KEY;
+    @Value("${auth.jwt.accessSignerKey}")
+    String ACCESS_SIGNER_KEY;
+
+    @NonFinal
+    @Value("${auth.jwt.refreshSignerKey}")
+    String REFRESH_SIGNER_KEY;
 
     @NonFinal
     @Value("${auth.jwt.valid-duration}")
@@ -90,7 +94,7 @@ public class SecurityUtil {
         JWSObject jwsObject = new JWSObject(header, payload);
 
         try {
-            jwsObject.sign(new MACSigner(SIGNER_KEY.getBytes()));
+            jwsObject.sign(new MACSigner((isRefresh) ? REFRESH_SIGNER_KEY.getBytes() : ACCESS_SIGNER_KEY.getBytes()));
             return jwsObject.serialize();
         } catch (JOSEException e) {
             log.error("Cannot create token", e);
@@ -103,8 +107,8 @@ public class SecurityUtil {
      *
      * @return the token validation JWT
      */
-    public SignedJWT verifyToken(String token) throws JOSEException, ParseException {
-        JWSVerifier verifier = new MACVerifier(SIGNER_KEY.getBytes());
+    public SignedJWT verifyToken(String token, boolean isRefresh ) throws JOSEException, ParseException {
+        JWSVerifier verifier = new MACVerifier((isRefresh) ? REFRESH_SIGNER_KEY.getBytes() : ACCESS_SIGNER_KEY.getBytes());
 
         SignedJWT signedJWT = SignedJWT.parse(token);
 

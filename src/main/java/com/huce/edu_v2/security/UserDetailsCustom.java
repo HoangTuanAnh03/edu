@@ -29,13 +29,10 @@ public class UserDetailsCustom implements UserDetailsService {
             throw new UsernameNotFoundException("User not existed");
         }
 
-//        log.info(Collections.singletonList(new SimpleGrantedAuthority(optionalUser.get().getRole().getName())).toString());
-
         return new User(
                 optionalUser.get().getEmail(),
                 optionalUser.get().getPassword(),
-//                Collections.singletonList(new SimpleGrantedAuthority(optionalUser.get().getRole().getName())));
-                Collections.singletonList(new SimpleGrantedAuthority("ADMIN")));
+                Collections.singletonList(new SimpleGrantedAuthority(optionalUser.get().getRole().getName())));
     }
 
 }
