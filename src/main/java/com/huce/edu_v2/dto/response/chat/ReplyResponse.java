@@ -1,10 +1,7 @@
-package com.huce.edu_v2.dto.request.chat;
+package com.huce.edu_v2.dto.response.chat;
 
 import com.fasterxml.jackson.databind.PropertyNamingStrategies;
 import com.fasterxml.jackson.databind.annotation.JsonNaming;
-import com.huce.edu_v2.util.constant.ChatTypeEnum;
-import jakarta.persistence.EnumType;
-import jakarta.persistence.Enumerated;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
 
@@ -14,13 +11,12 @@ import lombok.experimental.FieldDefaults;
 @AllArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE)
 @JsonNaming(PropertyNamingStrategies.SnakeCaseStrategy.class)
-public class MessageRequest {
-    String accessToken;
-
-    String message;
-
+public class ReplyResponse {
     Long id;
 
-    @Enumerated(EnumType.STRING)
-    ChatTypeEnum type;
+    String senderId;
+
+    String senderName;
+
+    String message;
 }

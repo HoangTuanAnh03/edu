@@ -35,6 +35,8 @@ public class Chat {
 	@Enumerated(EnumType.STRING)
 	ChatStatusEnum status;
 
+	Long replyId;
+
 	@PrePersist
 	protected void onCreate() {
 		this.timestamp = LocalDateTime.now();

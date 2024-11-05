@@ -10,6 +10,7 @@ import com.huce.edu_v2.repository.ChatRepository;
 import com.huce.edu_v2.service.ChatService;
 import com.huce.edu_v2.util.SecurityUtil;
 import com.huce.edu_v2.util.constant.ChatStatusEnum;
+import com.huce.edu_v2.util.constant.ChatTypeEnum;
 import com.huce.edu_v2.util.constant.SenderType;
 import com.nimbusds.jwt.SignedJWT;
 import lombok.AccessLevel;
@@ -58,17 +59,32 @@ public class ChatServiceImpl implements ChatService {
 	@SneakyThrows
 	@Override
 	public ChatResponse sendMessageToUser(String userId, MessageRequest messageRequest) {
-		String uidByToken = securityUtil.getUuid(SignedJWT.parse(messageRequest.getAccessToken()));
+		String adminIdByToken = securityUtil.getUuid(SignedJWT.parse(messageRequest.getAccessToken()));
 
+		if (!messageRequest.getType().equals(ChatTypeEnum.DELETE)){
 		Chat newChat = chatRepository.save(Chat.builder()
 				.senderType(SenderType.ADMIN)
 				.userId(userId)
-				.adminId(uidByToken)
+				.adminId(adminIdByToken)
 				.message(messageRequest.getMessage())
 				.status(ChatStatusEnum.SENT)
+				.replyId(messageRequest.getType().equals(ChatTypeEnum.REPLY) ? messageRequest.getId() : null)
 				.build());
 
-		return chatMapper.toChatResponse(newChat);
+			return chatMapper.toChatResponse(newChat);
+
+		}
+
+		Chat chatRemove = chatRepository.findById(messageRequest.getId()).orElseThrow(
+				() -> new ResourceNotFoundException("Chat", "chatId", messageRequest.getId())
+		);
+
+		chatRemove.setMessage("");
+
+		return ChatResponse.builder()
+				.id(chatRemove.getId())
+				.type(ChatTypeEnum.DELETE)
+				.build();
 	}
 
 	@SneakyThrows
@@ -82,6 +98,7 @@ public class ChatServiceImpl implements ChatService {
 				.adminId("")
 				.message(messageRequest.getMessage())
 				.status(ChatStatusEnum.SENT)
+				.replyId(messageRequest.getType().equals(ChatTypeEnum.REPLY) ? messageRequest.getId() : null)
 				.build());
 
 		return chatMapper.toChatResponse(newChat);

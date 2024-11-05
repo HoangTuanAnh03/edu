@@ -3,6 +3,7 @@ package com.huce.edu_v2.dto.response.chat;
 import com.fasterxml.jackson.databind.PropertyNamingStrategies;
 import com.fasterxml.jackson.databind.annotation.JsonNaming;
 import com.huce.edu_v2.util.constant.ChatStatusEnum;
+import com.huce.edu_v2.util.constant.ChatTypeEnum;
 import com.huce.edu_v2.util.constant.SenderType;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
@@ -22,7 +23,11 @@ public class ChatResponse {
 
     String userId;
 
+    String userName;
+
     String adminId;
+
+    String adminName;
 
     @Enumerated(EnumType.STRING)
     SenderType senderType;
@@ -33,4 +38,9 @@ public class ChatResponse {
 
     @Enumerated(EnumType.STRING)
     ChatStatusEnum status;
+
+    @Enumerated(EnumType.STRING)
+    ChatTypeEnum type;
+
+    ReplyResponse reply;
 }

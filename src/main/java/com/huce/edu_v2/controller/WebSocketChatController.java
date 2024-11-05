@@ -22,10 +22,13 @@ public class WebSocketChatController {
 	SimpMessagingTemplate messagingTemplate;
 	ChatService chatService;
 
-	@MessageMapping("/userToAdmin")
-	@SendTo("/topic/admin")
-	public ChatResponse sendToAdmin(MessageRequest messageRequest) {
-		return chatService.sendMessageToAdmin(messageRequest);
+	@MessageMapping("/userToAdmin/{userId}")
+//	@SendTo("/topic/admin")
+	public void sendToAdmin(@DestinationVariable String userId, MessageRequest messageRequest) {
+//		return chatService.sendMessageToAdmin(messageRequest);
+		ChatResponse chatResponse = chatService.sendMessageToAdmin(messageRequest);
+		messagingTemplate.convertAndSend("/topic/user/" + userId, chatResponse);
+		messagingTemplate.convertAndSend("/topic/admin", chatResponse);
 	}
 
 	@SneakyThrows
