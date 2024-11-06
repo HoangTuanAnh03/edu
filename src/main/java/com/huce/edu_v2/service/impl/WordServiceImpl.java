@@ -4,8 +4,10 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.huce.edu_v2.dto.response.word.QuestionResponse;
 import com.huce.edu_v2.entity.History;
+import com.huce.edu_v2.entity.User;
 import com.huce.edu_v2.entity.Word;
 import com.huce.edu_v2.repository.HistoryRepository;
+import com.huce.edu_v2.repository.LevelRepository;
 import com.huce.edu_v2.repository.TopicRepository;
 import com.huce.edu_v2.repository.WordRepository;
 import com.huce.edu_v2.service.WordService;
@@ -34,6 +36,9 @@ public class WordServiceImpl implements WordService {
 
 	@Autowired
 	HistoryRepository historyRepository;
+
+	@Autowired
+	LevelRepository levelRepository;
 
 	private static final ObjectMapper objectMapper = new ObjectMapper();
 
@@ -206,5 +211,40 @@ public class WordServiceImpl implements WordService {
 	@Override
 	public Word findFirstByWid(Integer wid) {
 		return wordRepository.findFirstByWid(wid);
+	}
+
+	@Override
+	public Word add(Word wordEntity, Integer tid, Integer lid) {
+		if(!topicRepository.findFirstByTid(tid).getLevel().getLid().equals(lid)){
+			return null;
+		}
+		wordEntity.setWid(0);
+		wordRepository.save(wordEntity);
+		return wordEntity;
+	}
+
+	@Override
+	public Word edit(Word wordEntity) {
+		wordRepository.save(wordEntity);
+		return wordEntity;
+	}
+
+	@Override
+	public Word delete(Integer id) {
+		Word word = wordRepository.findByWid(id);
+		wordRepository.delete(word);
+		return word;
+	}
+
+	@Override
+	public List<QuestionResponse> getTest(User user) {
+		List<Word> words = wordRepository.findWordsByUserHistory(user.getId());
+		if(words.size() < 10) return null;
+		return words.stream().map(this::getWordDefault).toList();
+	}
+
+	@Override
+	public List<Word> findByTid(Integer tid) {
+		return wordRepository.findWordsByTopic(topicRepository.findFirstByTid(tid));
 	}
 }

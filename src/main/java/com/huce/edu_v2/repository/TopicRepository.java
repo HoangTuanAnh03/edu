@@ -1,5 +1,6 @@
 package com.huce.edu_v2.repository;
 
+import com.huce.edu_v2.entity.Level;
 import com.huce.edu_v2.entity.Topic;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
@@ -20,4 +21,12 @@ public interface TopicRepository extends JpaRepository<Topic, Integer> {
 					"GROUP BY t.tid"
 	)
 	List<Object[]> findTopicsWithProgressAndWordCountByLevelId(int lid, String uid);
+
+	Topic findFirstByTnameAndLevel(String tname, Level level);
+
+	Boolean existsByTid(Integer tid);
+
+	Boolean existsByTnameAndLevel(String tname, Level level);
+
+	List<Topic> getTopicsByLevel(Level level);
 }

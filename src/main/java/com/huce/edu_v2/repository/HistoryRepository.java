@@ -5,5 +5,7 @@ import com.huce.edu_v2.entity.Word;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 public interface HistoryRepository extends JpaRepository<History, Integer> {
-	public History findFirstByUidAndWord(String uid, Word word);
+	 History findFirstByUidAndWord(String uid, Word word);
+
+
 }
