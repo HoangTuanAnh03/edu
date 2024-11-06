@@ -60,7 +60,7 @@ public class SecurityConfiguration {
 //                    .cors(AbstractHttpConfigurer::disable)
                     .authorizeHttpRequests(request -> request.requestMatchers(PUBLIC_ENDPOINTS)
                         .permitAll()
-
+                            .requestMatchers(HttpMethod.GET, "/words/*").permitAll()
                         .requestMatchers(HttpMethod.GET, "/users").hasAuthority(PredefinedRole.ROLE_ADMIN)
                         .requestMatchers(HttpMethod.POST, "/users/create-password").hasAuthority(PredefinedRole.ROLE_USER)
                         .requestMatchers(HttpMethod.DELETE, "/users/*").hasAuthority(PredefinedRole.ROLE_ADMIN)

@@ -5,9 +5,9 @@ spring:
     name: "edu_v2"
 
   datasource:
-    url: jdbc:mysql://localhost:3306/edudb
+    url: jdbc:mysql://localhost:3306/edudb?createDatabaseIfNotExist=true
     username: root
-    password: root
+    password:
   jpa:
     show-sql: true
     hibernate:
@@ -65,3 +65,11 @@ redis:
 app:
   upload-file:
     base-uri: file:///D:/upload/
+
+GEMINI_API_KEY: "AIzaSyA3AO1s07NETxVWTGdRmiarO_pp58Tag20"
+
+GROQ_KEY: "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"
+
+OPENROUTER: "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"
+
+OPENAI_KEY: "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"
