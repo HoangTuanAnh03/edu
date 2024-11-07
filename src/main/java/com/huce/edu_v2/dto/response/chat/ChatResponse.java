@@ -23,11 +23,7 @@ public class ChatResponse {
 
     String userId;
 
-    String userName;
-
     String adminId;
-
-    String adminName;
 
     @Enumerated(EnumType.STRING)
     SenderType senderType;

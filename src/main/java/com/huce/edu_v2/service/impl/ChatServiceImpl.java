@@ -4,6 +4,8 @@ import com.huce.edu_v2.advice.exception.ResourceNotFoundException;
 import com.huce.edu_v2.dto.mapper.ChatMapper;
 import com.huce.edu_v2.dto.request.chat.MessageRequest;
 import com.huce.edu_v2.dto.response.chat.ChatResponse;
+import com.huce.edu_v2.dto.response.chat.ConversationResponse;
+import com.huce.edu_v2.dto.response.chat.UserInChat;
 import com.huce.edu_v2.dto.response.chat.UserResponse;
 import com.huce.edu_v2.entity.Chat;
 import com.huce.edu_v2.repository.ChatRepository;
@@ -20,8 +22,7 @@ import lombok.experimental.FieldDefaults;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
 
 @Slf4j
 @Service
@@ -33,8 +34,31 @@ public class ChatServiceImpl implements ChatService {
 	ChatMapper chatMapper;
 
 	@Override
-	public List<ChatResponse> getMessagesByUserId(String userId) {
-		return chatRepository.findByUserId(userId).stream().map(chatMapper::toChatResponse).toList();
+	public ConversationResponse getMessagesByUserId(String userId) {
+		Set<String> userIds = new HashSet<>();
+		List<ChatResponse> messages = new ArrayList<>();
+
+		chatRepository.findByUserId(userId).forEach(
+				chat ->
+				{
+					ChatResponse chatResponse = chatMapper.toChatResponse(chat);
+					messages.add(chatResponse);
+					userIds.add(chat.getUserId());
+
+					if (!Objects.equals(chatResponse.getAdminId(), ""))
+						userIds.add(chat.getAdminId());
+
+					if (chatResponse.getReply() != null)
+						userIds.add(chatResponse.getReply().getSenderId());
+				}
+		);
+
+		List<UserInChat> users = userIds.stream().map(chatMapper::toUserInChat).toList();
+
+		return ConversationResponse.builder()
+				.users(users)
+				.messages(messages)
+				.build();
 	}
 
 	@Override

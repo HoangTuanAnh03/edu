@@ -2,6 +2,7 @@ package com.huce.edu_v2.controller;
 
 import com.huce.edu_v2.dto.ApiResponse;
 import com.huce.edu_v2.dto.response.chat.ChatResponse;
+import com.huce.edu_v2.dto.response.chat.ConversationResponse;
 import com.huce.edu_v2.dto.response.chat.UserResponse;
 import com.huce.edu_v2.service.ChatService;
 import lombok.AccessLevel;
@@ -33,12 +34,11 @@ public class ChatController {
 	}
 
 	@GetMapping("/messages/{userId}")
-	public ApiResponse<List<ChatResponse>> getMessagesByUserId(@PathVariable String userId) {
-		List<ChatResponse> messages = chatService.getMessagesByUserId(userId);
-		return ApiResponse.<List<ChatResponse>>builder()
+	public ApiResponse<ConversationResponse> getMessagesByUserId(@PathVariable String userId) {
+		return ApiResponse.<ConversationResponse>builder()
 				.code(HttpStatus.OK.value())
 				.message("Fetch all message by userid")
-				.data(messages)
+				.data(chatService.getMessagesByUserId(userId))
 				.build();
 	}
 

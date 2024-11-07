@@ -3,18 +3,18 @@ package com.huce.edu_v2.dto.mapper;
 import com.huce.edu_v2.advice.exception.ResourceNotFoundException;
 import com.huce.edu_v2.dto.response.chat.ChatResponse;
 import com.huce.edu_v2.dto.response.chat.ReplyResponse;
+import com.huce.edu_v2.dto.response.chat.UserInChat;
 import com.huce.edu_v2.dto.response.chat.UserResponse;
 import com.huce.edu_v2.entity.Chat;
 import com.huce.edu_v2.entity.User;
 import com.huce.edu_v2.repository.ChatRepository;
 import com.huce.edu_v2.service.UserService;
 import com.huce.edu_v2.util.constant.ChatTypeEnum;
+import com.huce.edu_v2.util.constant.SenderType;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
 import org.springframework.stereotype.Component;
-
-import java.util.Objects;
 
 @Component
 @RequiredArgsConstructor
@@ -24,16 +24,11 @@ public class ChatMapper {
     ChatRepository chatRepository;
 
     public ChatResponse toChatResponse(Chat chat) {
-        User user = userService.fetchUserById(chat.getUserId());
-        User admin = userService.fetchUserById(chat.getAdminId());
-
         return ChatResponse.builder()
                 .id(chat.getId())
                 .userId(chat.getUserId())
-                .userName(user.getName())
                 .adminId(chat.getAdminId())
                 .senderType(chat.getSenderType())
-                .adminName(admin != null ? admin.getName() : "")
                 .message(chat.getMessage())
                 .timestamp(chat.getTimestamp())
                 .status(chat.getStatus()).type(chat.getReplyId() == null ? ChatTypeEnum.SENT : ChatTypeEnum.REPLY)
@@ -45,13 +40,9 @@ public class ChatMapper {
     }
 
     public ReplyResponse toReplyResponse(Chat chat) {
-        User user = userService.fetchUserById(chat.getUserId());
-        User admin = userService.fetchUserById(chat.getAdminId());
-
         return ReplyResponse.builder()
                 .id(chat.getId())
-                .senderId(admin != null ? admin.getId() : user.getId())
-                .senderName(admin != null ? admin.getName() : user.getName())
+                .senderId(chat.getSenderType() == SenderType.ADMIN ? chat.getAdminId() : chat.getUserId())
                 .message(chat.getMessage())
                 .build();
     }
@@ -70,6 +61,16 @@ public class ChatMapper {
                 .senderType(chat.getSenderType())
                 .status(chat.getStatus())
                 .timestamp(chat.getTimestamp())
+                .build();
+    }
+
+    public UserInChat toUserInChat(String id) {
+        User user = userService.fetchUserById(id);
+
+        return UserInChat.builder()
+                .userId(id)
+                .userName(user.getName())
+                .image(user.getImage())
                 .build();
     }
 }

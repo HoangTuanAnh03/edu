@@ -65,6 +65,18 @@ VALUES
      '2003-07-17', 'admin@gmail.com', 'FEMALE', NULL, 'ADMIN',
      '$2a$10$EJkL.sXN6Tg.NHzrmTk7DeWJf2lO/QYAJk7x7S41T4iHlgfimeUQu', 3, 1);
 
+
+create table IF NOT EXISTS verification_code
+(
+    id    bigint auto_increment
+        primary key,
+    code  varchar(255) null,
+    email varchar(255) null,
+    exp   datetime(6)  null,
+    type  tinyint      null,
+    check (`type` between 0 and 1)
+);
+
 -- create
 
 	CREATE TABLE IF NOT EXISTS levels (

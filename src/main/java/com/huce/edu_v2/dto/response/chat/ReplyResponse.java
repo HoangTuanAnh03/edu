@@ -16,7 +16,5 @@ public class ReplyResponse {
 
     String senderId;
 
-    String senderName;
-
     String message;
 }
