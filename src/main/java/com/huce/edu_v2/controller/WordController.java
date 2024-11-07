@@ -102,18 +102,6 @@ public class WordController {
 
 	@PutMapping("/edit")
 	public ApiResponse<Word> edit(@RequestBody Word wordEntity){
-		if(wordService.findFirstByWid(wordEntity.getWid()) == null)
-			return ApiResponse.<Word>builder()
-					.code(HttpStatus.BAD_REQUEST.value())
-					.message("Word does not exists")
-					.data(null)
-					.build();
-		if(topicService.findFirstByTid(wordEntity.getTopic().getTid()) == null)
-			return ApiResponse.<Word>builder()
-					.code(HttpStatus.BAD_REQUEST.value())
-					.message("Topic does not exists")
-					.data(null)
-					.build();
 		return ApiResponse.<Word>builder()
 				.code(HttpStatus.OK.value())
 				.message("Edit word successfully")
@@ -123,12 +111,6 @@ public class WordController {
 
 	@DeleteMapping("/delete")
 	public ApiResponse<Word> delete(@RequestParam Integer wid){
-		if(wordService.findFirstByWid(wid) == null)
-			return ApiResponse.<Word>builder()
-					.message("Wid does not exists")
-					.data(null)
-					.code(HttpStatus.BAD_REQUEST.value())
-					.build();
 		return ApiResponse.<Word>builder()
 				.message("Delete word successfully")
 				.data(wordService.delete(wid))

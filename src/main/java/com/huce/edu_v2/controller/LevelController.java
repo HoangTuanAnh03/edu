@@ -21,18 +21,18 @@ import java.util.List;
 @AllArgsConstructor
 @FieldDefaults(level = AccessLevel.PUBLIC, makeFinal = true)
 public class LevelController {
-	final LevelService levelService;
-	final UserService userService;
-	final SecurityUtil securityUtil;
+	LevelService levelService;
+	UserService userService;
+	SecurityUtil securityUtil;
+
 	@GetMapping("/getAll")
 	public ApiResponse<List<LevelResponse>> getAll(){
-		String uid = "tdf";
 		User user = userService.fetchUserByEmail(securityUtil.getCurrentUserLogin().orElse(null));
-		if(user != null) uid = user.getId();
+
 		return ApiResponse.<List<LevelResponse>>builder()
 				.code(HttpStatus.OK.value())
 				.message("Fetch all levels by user")
-				.data(levelService.findAllLevelsWithProgressForUser(uid))
+				.data(levelService.findAllLevelsWithProgressForUser(user.getId()))
 				.build();
 	}
 }

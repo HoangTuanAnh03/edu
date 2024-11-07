@@ -2,27 +2,29 @@ package com.huce.edu_v2.entity;
 
 import jakarta.persistence.*;
 import lombok.*;
+import lombok.experimental.FieldDefaults;
 
-@Entity
-@Data
-@NoArgsConstructor
-@AllArgsConstructor
 @Getter
 @Setter
+@Builder
+@NoArgsConstructor
+@AllArgsConstructor
+@FieldDefaults(level = AccessLevel.PRIVATE)
+@Entity
 @Table(name = "history")
 public class History {
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	@Id
 	@Column(name = "hid")
-	private Integer id;
-	@Basic
+	Integer id;
+
 	@Column(name = "uid")
-	private String uid;
+	String uid;
+
 	@ManyToOne
 	@JoinColumn(name = "wid")
-	private Word word;
-	@Basic
-	@Column(name = "iscorrect")
-	private Integer iscorrect;
+	Word word;
 
+	@Column(name = "iscorrect")
+	Integer iscorrect;
 }

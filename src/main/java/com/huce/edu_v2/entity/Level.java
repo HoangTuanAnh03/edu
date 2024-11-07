@@ -1,24 +1,24 @@
 package com.huce.edu_v2.entity;
 
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
+import lombok.experimental.FieldDefaults;
 
-@AllArgsConstructor
-@NoArgsConstructor
 @Getter
 @Setter
+@Builder
+@NoArgsConstructor
+@AllArgsConstructor
+@FieldDefaults(level = AccessLevel.PRIVATE)
 @Entity
 @Table(name = "levels")
 public class Level {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	private Integer lid;
+	Integer lid;
 
-	private String lname;
+	String lname;
 
-	private String limage;
+	String limage;
 }
 

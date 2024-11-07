@@ -1,33 +1,31 @@
 package com.huce.edu_v2.entity;
 
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
+import lombok.experimental.FieldDefaults;
 
-@AllArgsConstructor
 @Getter
 @Setter
-@Entity
+@Builder
 @NoArgsConstructor
+@AllArgsConstructor
+@FieldDefaults(level = AccessLevel.PRIVATE)
+@Entity
 @Table(name = "words")
 public class Word {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	private Integer wid;
-
-	private String word;
-	private String pronun;
-	private String entype;
-	private String vietype;
-	private String voice;
-	private String photo;
-	private String meaning;
-	private String endesc;
-	private String viedesc;
-
+	Integer wid;
+	String word;
+	String pronun;
+	String entype;
+	String vietype;
+	String voice;
+	String photo;
+	String meaning;
+	String endesc;
+	String viedesc;
 	@ManyToOne
 	@JoinColumn(name = "tid")
-	private Topic topic;
+	Topic topic;
 }

@@ -21,30 +21,25 @@ import java.util.List;
 @AllArgsConstructor
 @FieldDefaults(level = AccessLevel.PUBLIC, makeFinal = true)
 public class TopicController {
-	final TopicService topicService;
-	final UserService userService;
-	final SecurityUtil securityUtil;
-	final LevelService levelService;
+	TopicService topicService;
+	UserService userService;
+	SecurityUtil securityUtil;
+	LevelService levelService;
+
 	@GetMapping("/getByLevel")
 	public ApiResponse<List<TopicResponse>> getByLevel(@RequestParam Integer lid){
-		String uid = "tdf";
 		User user = userService.fetchUserByEmail(securityUtil.getCurrentUserLogin().orElse(null));
-		if(user != null) uid = user.getId();
+
 		return ApiResponse.<List<TopicResponse>>builder()
-				.message("Fetch all topics by levelid and user")
+				.message("Fetch all topics by levelId and user")
 				.code(HttpStatus.OK.value())
-				.data(topicService.findTopicsWithProgressAndWordCountByLevelId(lid, uid))
+				.data(topicService.findTopicsWithProgressAndWordCountByLevelId(lid, user.getId()))
 				.build();
 	}
 
 	@PostMapping("/add")
 	public ApiResponse<Topic> add(@RequestParam Integer lid, @RequestParam String tname){
-		if(levelService.findFirstByLid(lid) == null)
-			return ApiResponse.<Topic>builder()
-					.data(null)
-					.code(HttpStatus.BAD_REQUEST.value())
-					.message("Lid does not exists")
-					.build();
+		levelService.findFirstByLid(lid);
 		return ApiResponse.<Topic>builder()
 				.data(topicService.add(lid, tname))
 				.code(HttpStatus.OK.value())
@@ -54,14 +49,11 @@ public class TopicController {
 
 	@DeleteMapping("/delete")
 	public ApiResponse<Topic> delete(@RequestParam Integer tid){
-		Topic topic = topicService.delete(tid);
-		ApiResponse<Topic> response = new ApiResponse<>(HttpStatus.OK.value(), "Delete Successfully", topic);
-
-		if(topic == null){
-			response.setCode(HttpStatus.BAD_REQUEST.value());
-			response.setMessage("Topic does not exists");
-		}
-		return response;
+		return ApiResponse.<Topic>builder()
+				.data(topicService.delete(tid))
+				.code(HttpStatus.OK.value())
+				.message("Delete topic successfully")
+				.build();
 	}
 
 	@GetMapping("/getTopicsByLid")

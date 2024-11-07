@@ -11,23 +11,23 @@ import java.util.Optional;
 
 @Repository
 public interface WordRepository extends JpaRepository<Word, Integer> {
-	Word findFirstByWid(Integer wid);
+    Word findFirstByWid(Integer wid);
 
-//	List<Word> findByTopic(Integer tid);
+    @Query(
+            "SELECT w " +
+                    "FROM Word w " +
+                    "JOIN History h ON w.wid = h.word.wid " +
+                    "WHERE h.uid = :uid " +
+                    "GROUP BY w.wid"
+    )
+    List<Word> findWordsByUserHistory(String uid);
 
-	@Query(
-			"SELECT w " +
-					"FROM Word w " +
-					"JOIN History h ON w.wid = h.word.wid " +
-					"WHERE h.uid = :uid " +
-					"GROUP BY w.wid"
-	)
-	List<Word> findWordsByUserHistory(String uid);
-	@Query(value = "SELECT w FROM Word w WHERE w.topic.tid = ?1 ORDER BY RAND() LIMIT 3")
-	List<Word> get3RandomWordsByTid(Integer tid);
-	Optional<Word> findFirstByWidGreaterThanAndTopic(Integer wid, Topic topic);
+    @Query(value = "SELECT w FROM Word w WHERE w.topic.tid = ?1 ORDER BY RAND() LIMIT 3")
+    List<Word> get3RandomWordsByTid(Integer tid);
 
-	Word findByWid(Integer wid);
+    Optional<Word> findFirstByWidGreaterThanAndTopic(Integer wid, Topic topic);
 
-	List<Word> findWordsByTopic(Topic topic);
+    Word findByWid(Integer wid);
+
+    List<Word> findWordsByTopic(Topic topic);
 }

@@ -1,20 +1,25 @@
 package com.huce.edu_v2.service.impl;
 
+import com.huce.edu_v2.advice.exception.ResourceNotFoundException;
 import com.huce.edu_v2.dto.response.topic.TopicResponse;
 import com.huce.edu_v2.entity.Topic;
 import com.huce.edu_v2.repository.LevelRepository;
 import com.huce.edu_v2.repository.TopicRepository;
 import com.huce.edu_v2.service.TopicService;
-import lombok.AllArgsConstructor;
-import org.springframework.stereotype.Component;
+import lombok.AccessLevel;
+import lombok.RequiredArgsConstructor;
+import lombok.experimental.FieldDefaults;
+import org.springframework.stereotype.Service;
 
 import java.util.List;
 
-@Component
-@AllArgsConstructor
+@Service
+@RequiredArgsConstructor
+@FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
 public class TopicServiceImpl implements TopicService {
-	final TopicRepository topicRepository;
-	final LevelRepository levelRepository;
+	TopicRepository topicRepository;
+	LevelRepository levelRepository;
+
 	@Override
 	public List<TopicResponse> findTopicsWithProgressAndWordCountByLevelId(Integer lid, String uid){
 		return topicRepository.findTopicsWithProgressAndWordCountByLevelId(lid, uid).stream().map(TopicResponse::new).toList();
@@ -27,23 +32,22 @@ public class TopicServiceImpl implements TopicService {
 
 	@Override
 	public Topic add(Integer lid, String name) {
-		Topic newTopic = new Topic(
-				0,
-				name,
-				levelRepository.findFirstByLid(lid)
-		);
-		return topicRepository.save(newTopic);
+		return topicRepository.save(Topic.builder()
+				.tname(name)
+				.level(levelRepository.findFirstByLid(lid))
+				.build());
 	}
 
 	@Override
 	public Topic edit(Topic topicEntity) {
-		topicRepository.save(topicEntity);
-		return topicEntity;
+		return topicRepository.save(topicEntity);
 	}
 
 	@Override
 	public Topic delete(Integer id) {
-		Topic topic = topicRepository.findFirstByTid(id);
+		Topic topic = topicRepository.findById(id).orElseThrow(
+				() -> new ResourceNotFoundException("Topic", "id", id)
+		);
 		topicRepository.delete(topic);
 		return topic;
 	}

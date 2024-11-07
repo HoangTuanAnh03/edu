@@ -6,9 +6,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.*;
 
-@Service
 public interface LevelService {
-	 List<Level> getAll();
 	 Level findFirstByLid(Integer lid);
 
 	 List<LevelResponse> findAllLevelsWithProgressForUser(String uid);

@@ -7,19 +7,14 @@ import org.springframework.stereotype.Service;
 
 import java.util.List;
 
-@Service
 public interface WordService {
-	 List<Word> findAll();
+	Word findFirstWordBeforeWid(Integer wid, Integer tid);
 
+	QuestionResponse getQuestion(Integer wid, Integer tid);
 
-	 Word findFirstWordBeforeWid(Integer wid, Integer tid);
+	Boolean checkAnswer(Integer wid, String w, String uid);
 
-//	public QuestionResponse getQuestion(Integer wid, Integer tid);
-	 QuestionResponse getQuestion(Integer wid, Integer tid);
-
-	 Boolean checkAnswer(Integer wid, String w, String uid);
-
-	 Word findFirstByWid(Integer wid);
+	Word findFirstByWid(Integer wid);
 
 	Word add(Word wordEntity, Integer tid, Integer lid);
 

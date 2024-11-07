@@ -1,7 +1,6 @@
 package com.huce.edu_v2.controller;
 
 import com.huce.edu_v2.dto.ApiResponse;
-import com.huce.edu_v2.dto.response.chat.ChatResponse;
 import com.huce.edu_v2.dto.response.chat.ConversationResponse;
 import com.huce.edu_v2.dto.response.chat.UserResponse;
 import com.huce.edu_v2.service.ChatService;
