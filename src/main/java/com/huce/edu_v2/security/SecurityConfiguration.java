@@ -61,6 +61,21 @@ public class SecurityConfiguration {
                     .authorizeHttpRequests(request -> request.requestMatchers(PUBLIC_ENDPOINTS)
                         .permitAll()
 
+//                            .requestMatchers(HttpMethod.GET, "/words/getWordsByTid").hasAuthority(PredefinedRole.ROLE_ADMIN)
+//                            .requestMatchers(HttpMethod.POST, "/words/add").hasAuthority(PredefinedRole.ROLE_ADMIN)
+//                            .requestMatchers(HttpMethod.PUT, "/words/edit").hasAuthority(PredefinedRole.ROLE_ADMIN)
+//                            .requestMatchers(HttpMethod.DELETE, "/words/delete").hasAuthority(PredefinedRole.ROLE_ADMIN)
+//
+//                            .requestMatchers(HttpMethod.GET, "/topics/getTopicsByLid").hasAuthority(PredefinedRole.ROLE_ADMIN)
+//                            .requestMatchers(HttpMethod.POST, "/topics/add").hasAuthority(PredefinedRole.ROLE_ADMIN)
+//                            .requestMatchers(HttpMethod.PUT, "/topics/edit").hasAuthority(PredefinedRole.ROLE_ADMIN)
+//                            .requestMatchers(HttpMethod.DELETE, "/topics/delete").hasAuthority(PredefinedRole.ROLE_ADMIN)
+                            .requestMatchers(HttpMethod.GET, "/words/getWordsByTid", "/topics/getTopicsByLid").hasAuthority(PredefinedRole.ROLE_ADMIN)
+                            .requestMatchers(HttpMethod.POST, "/words/add", "/topics/add").hasAuthority(PredefinedRole.ROLE_ADMIN)
+                            .requestMatchers(HttpMethod.PUT, "/words/edit", "/topics/edit").hasAuthority(PredefinedRole.ROLE_ADMIN)
+                            .requestMatchers(HttpMethod.DELETE, "/words/delete", "/topics/delete").hasAuthority(PredefinedRole.ROLE_ADMIN)
+
+                            .requestMatchers(HttpMethod.GET, "/words/*").permitAll()
                         .requestMatchers(HttpMethod.GET, "/users").hasAuthority(PredefinedRole.ROLE_ADMIN)
                         .requestMatchers(HttpMethod.POST, "/users/create-password").hasAuthority(PredefinedRole.ROLE_USER)
                         .requestMatchers(HttpMethod.DELETE, "/users/*").hasAuthority(PredefinedRole.ROLE_ADMIN)
