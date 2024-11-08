@@ -1,7 +1,13 @@
 package com.huce.edu_v2.dto.response.topic;
 
 import com.huce.edu_v2.entity.Topic;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.Setter;
 
+@Getter
+@Setter
+@AllArgsConstructor
 public class TopicResponse {
 	Integer tid;
 	String tname;
@@ -13,6 +19,6 @@ public class TopicResponse {
 		this.tid = topic.getTid();
 		this.tname = topic.getTname();
 		this.progress = (float) res[1];
-		this.numWords = (int) res[2];
+		this.numWords = (long) res[2];
 	}
 }
