@@ -3,11 +3,14 @@ package com.huce.edu_v2.service.impl;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.huce.edu_v2.advice.exception.ResourceNotFoundException;
+import com.huce.edu_v2.dto.response.test.TestResponse;
 import com.huce.edu_v2.dto.response.word.QuestionResponse;
 import com.huce.edu_v2.entity.History;
+import com.huce.edu_v2.entity.TestHistory;
 import com.huce.edu_v2.entity.User;
 import com.huce.edu_v2.entity.Word;
 import com.huce.edu_v2.repository.HistoryRepository;
+import com.huce.edu_v2.repository.TestHistoryRepository;
 import com.huce.edu_v2.repository.TopicRepository;
 import com.huce.edu_v2.repository.WordRepository;
 import com.huce.edu_v2.service.WordService;
@@ -22,9 +25,8 @@ import java.net.URI;
 import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
+import java.time.Duration;
+import java.util.*;
 
 @Service
 @RequiredArgsConstructor
@@ -34,6 +36,8 @@ public class WordServiceImpl implements WordService {
     WordRepository wordRepository;
     TopicRepository topicRepository;
     HistoryRepository historyRepository;
+    TestHistoryRepository testHistoryRepository;
+
     @NonFinal
     @Value("${GROQ_KEY}")
     private String groqKey;
@@ -134,6 +138,7 @@ public class WordServiceImpl implements WordService {
                 .uri(URI.create("https://api.groq.com/openai/v1/chat/completions"))
                 .header("Content-Type", "application/json")
                 .header("Authorization", "Bearer " + groqKey)
+                .timeout(Duration.ofMillis(500))
                 .POST(HttpRequest.BodyPublishers.ofString(body))
                 .build();
         var client = HttpClient.newHttpClient();
@@ -215,11 +220,43 @@ public class WordServiceImpl implements WordService {
     public List<QuestionResponse> getTest(User user) {
         List<Word> words = wordRepository.findWordsByUserHistory(user.getId());
         if (words.size() < 10) return null;
-        return words.stream().map(this::getWordDefault).toList();
+        Collections.shuffle(words);
+        return  words.stream().limit(10).map(this::getWordDefault).toList();
     }
 
     @Override
     public List<Word> findByTid(Integer tid) {
         return wordRepository.findWordsByTopic(topicRepository.findFirstByTid(tid));
+    }
+
+    @Override
+    public Map<String, Object> handleCheckTest(List<TestResponse> testQuestion, String uid){
+        Map<String, Object> response = new HashMap<>();
+
+        testQuestion = testQuestion.stream().peek(ques -> {
+            String word = wordRepository.findFirstByWid(ques.getWid()).getWord();
+            ques.setSystemAnswer(word);
+            ques.setCorrect(word.equals(ques.getUserAnswer()));
+		}).toList();
+
+        int correctCount = Math.toIntExact(testQuestion.stream()
+                .filter(TestResponse::isCorrect)
+                .count());
+
+        testHistoryRepository.save(TestHistory.builder()
+                        .uid(uid)
+                        .numcorrectques(correctCount)
+                        .numques(testQuestion.size())
+                .build());
+
+        response.put("numQues", testQuestion.size());
+        response.put("numCorrectques", correctCount);
+        response.put("testDetail", testQuestion);
+        return response;
+    }
+
+    @Override
+    public List<TestHistory> getTestHistory(String uid){
+        return testHistoryRepository.findTestHistoriesByUid(uid);
     }
 }
