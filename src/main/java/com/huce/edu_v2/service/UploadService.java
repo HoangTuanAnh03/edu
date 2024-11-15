@@ -1,11 +1,11 @@
 package com.huce.edu_v2.service;
 
 import com.huce.edu_v2.advice.exception.StorageException;
+import com.huce.edu_v2.dto.response.upload.UploadFileResponse;
 import org.springframework.core.io.InputStreamResource;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.FileNotFoundException;
-import java.io.IOException;
 import java.net.URISyntaxException;
 
 public interface UploadService {
@@ -15,7 +15,7 @@ public interface UploadService {
     void validTypeImage(MultipartFile file) throws StorageException;
 
 
-    String store(MultipartFile file, String folder) throws URISyntaxException, IOException, StorageException;
+    UploadFileResponse storeImage(MultipartFile file, String folder);
 
     long getFileLength(String fileName, String folder) throws URISyntaxException;
 

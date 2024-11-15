@@ -119,6 +119,7 @@ public class AuthenticationServiceImpl implements AuthenticationService {
                 .name(user.getName())
                 .role("ROLE_" + user.getRole().getName())
                 .noPassword(!StringUtils.hasText(user.getPassword()))
+                .image(user.getImage())
                 .build();
 
         return AuthenticationResponse.builder()

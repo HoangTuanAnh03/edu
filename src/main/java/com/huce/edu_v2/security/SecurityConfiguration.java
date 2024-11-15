@@ -71,6 +71,14 @@ public class SecurityConfiguration {
                             .requestMatchers(HttpMethod.POST, "/users/create-password").hasAuthority(PredefinedRole.ROLE_USER)
                             .requestMatchers(HttpMethod.DELETE, "/users/*").hasAuthority(PredefinedRole.ROLE_ADMIN)
 
+                            .requestMatchers(HttpMethod.GET, "/levels/getAll").hasAuthority(PredefinedRole.ROLE_USER)
+                            .requestMatchers(HttpMethod.GET, "/levels/*").hasAuthority(PredefinedRole.ROLE_ADMIN)
+                            .requestMatchers(HttpMethod.POST, "/levels").hasAuthority(PredefinedRole.ROLE_ADMIN)
+                            .requestMatchers(HttpMethod.PUT, "/levels").hasAuthority(PredefinedRole.ROLE_ADMIN)
+                            .requestMatchers(HttpMethod.DELETE, "/levels/*").hasAuthority(PredefinedRole.ROLE_ADMIN)
+
+                            .requestMatchers(HttpMethod.POST, "/upload/*").authenticated()
+
                             .requestMatchers(HttpMethod.GET, "/infoChat/users/getAllUserIdsAndLatestMessage").hasAuthority(PredefinedRole.ROLE_ADMIN)
 
                             .anyRequest().authenticated())

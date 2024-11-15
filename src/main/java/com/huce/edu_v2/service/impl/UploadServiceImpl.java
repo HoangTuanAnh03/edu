@@ -1,9 +1,11 @@
 package com.huce.edu_v2.service.impl;
 
 import com.huce.edu_v2.advice.exception.StorageException;
+import com.huce.edu_v2.dto.response.upload.UploadFileResponse;
 import com.huce.edu_v2.service.UploadService;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
+import lombok.SneakyThrows;
 import lombok.experimental.FieldDefaults;
 import lombok.experimental.NonFinal;
 import org.springframework.beans.factory.annotation.Value;
@@ -18,7 +20,9 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
+import java.time.Instant;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
 
@@ -73,8 +77,22 @@ public class UploadServiceImpl implements UploadService {
         }
     }
 
+    @SneakyThrows
     @Override
-    public String store(MultipartFile file, String folder) throws URISyntaxException, IOException {
+    public UploadFileResponse storeImage(MultipartFile file, String folder) {
+
+        validTypeImage(file);
+        // store file
+        List<String> uploadFile = Collections.singletonList(this.save(file, folder));
+
+        return UploadFileResponse.builder()
+                .fileName(uploadFile)
+                .uploadedAt(Instant.now())
+                .build();
+    }
+
+    //    @Override
+    private String save(MultipartFile file, String folder) throws URISyntaxException, IOException {
         // create a directory if not exist
         this.createDirectory(baseURI + folder);
 

@@ -57,7 +57,7 @@ services:
       start_period: 30s
 
   edu:
-    image: "tuananh177/edu_v2:v1.3"
+    image: "tuananh177/edu_v2:v1.4"
     container_name: EduV2
     ports:
       - "8080:8080"

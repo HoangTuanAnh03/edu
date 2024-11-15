@@ -5,11 +5,12 @@ import com.huce.edu_v2.advice.ErrorCode;
 import com.huce.edu_v2.advice.exception.DuplicateRecordException;
 import com.huce.edu_v2.advice.exception.ResourceNotFoundException;
 import com.huce.edu_v2.dto.mapper.UserMapper;
-import com.huce.edu_v2.dto.request.user.CreateUserRequest;
-import com.huce.edu_v2.dto.request.email.NotificationEvent;
 import com.huce.edu_v2.dto.request.auth.PasswordCreationRequest;
+import com.huce.edu_v2.dto.request.email.NotificationEvent;
+import com.huce.edu_v2.dto.request.user.CreateUserRequest;
 import com.huce.edu_v2.dto.request.user.UpdateUserRequest;
-import com.huce.edu_v2.dto.response.ResultPaginationDTO;
+import com.huce.edu_v2.dto.response.pageable.Meta;
+import com.huce.edu_v2.dto.response.pageable.ResultPaginationDTO;
 import com.huce.edu_v2.dto.response.user.UserResponse;
 import com.huce.edu_v2.entity.Role;
 import com.huce.edu_v2.entity.User;
@@ -102,25 +103,21 @@ public class UserServiceImpl implements UserService {
     @Override
     public ResultPaginationDTO fetchAllUser(Specification<User> spec, Pageable pageable) {
         Page<User> pageUser = this.userRepository.findAll(spec, pageable);
-        ResultPaginationDTO rs = new ResultPaginationDTO();
-        ResultPaginationDTO.Meta mt = new ResultPaginationDTO.Meta();
-
-        mt.setPage(pageable.getPageNumber() + 1);
-        mt.setPageSize(pageable.getPageSize());
-
-        mt.setPages(pageUser.getTotalPages());
-        mt.setTotal(pageUser.getTotalElements());
-
-        rs.setMeta(mt);
 
         // remove sensitive data
         List<UserResponse> listUser = pageUser.getContent()
                 .stream().map(this.userMapper::toUserResponse)
                 .collect(Collectors.toList());
 
-        rs.setResult(listUser);
-
-        return rs;
+        return ResultPaginationDTO.builder()
+                .meta(Meta.builder()
+                        .page(pageable.getPageNumber())
+                        .pageSize(pageable.getPageSize())
+                        .pages(pageUser.getTotalPages())
+                        .total(pageUser.getTotalElements())
+                        .build())
+                .result(listUser)
+                .build();
     }
 
     @Override

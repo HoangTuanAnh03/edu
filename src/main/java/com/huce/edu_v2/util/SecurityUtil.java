@@ -21,6 +21,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.stereotype.Service;
+import org.springframework.util.StringUtils;
 
 import java.text.ParseException;
 import java.time.Instant;
@@ -87,6 +88,9 @@ public class SecurityUtil {
                 ))
                 .jwtID(UUID.randomUUID().toString())
                 .claim("scope", buildScope(user))
+                .claim("name", user.getName())
+                .claim("image", user.getImage())
+                .claim("no_password", !StringUtils.hasText(user.getPassword()))
                 .build();
 
         Payload payload = new Payload(jwtClaimsSet.toJSONObject());

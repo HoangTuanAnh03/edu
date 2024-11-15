@@ -3,13 +3,14 @@ package com.huce.edu_v2.repository;
 import com.huce.edu_v2.entity.Level;
 import com.huce.edu_v2.entity.Topic;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
 
 @Repository
-public interface TopicRepository extends JpaRepository<Topic, Integer> {
+public interface TopicRepository extends JpaRepository<Topic, Integer>, JpaSpecificationExecutor<Topic> {
     Topic findFirstByTid(Integer tid);
 
     @Query(
