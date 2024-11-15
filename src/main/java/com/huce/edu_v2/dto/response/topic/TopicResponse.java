@@ -5,6 +5,8 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.Setter;
 
+import java.util.Arrays;
+
 @Getter
 @Setter
 @AllArgsConstructor
@@ -15,6 +17,7 @@ public class TopicResponse {
 	float progress;
 
 	public TopicResponse(Object[] res){
+		System.out.println(Arrays.toString(res));
 		Topic topic = (Topic) res[0];
 		this.tid = topic.getTid();
 		this.tname = topic.getTname();

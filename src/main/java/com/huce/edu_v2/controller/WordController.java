@@ -1,9 +1,15 @@
 package com.huce.edu_v2.controller;
 
 import com.huce.edu_v2.dto.ApiResponse;
+import com.huce.edu_v2.dto.response.chat.ConversationResponse;
+import com.huce.edu_v2.dto.response.chat.UserInChat;
+import com.huce.edu_v2.dto.response.test.TestResponse;
 import com.huce.edu_v2.dto.response.word.QuestionResponse;
+import com.huce.edu_v2.entity.TestHistory;
 import com.huce.edu_v2.entity.User;
 import com.huce.edu_v2.entity.Word;
+import com.huce.edu_v2.repository.LevelRepository;
+import com.huce.edu_v2.repository.TopicRepository;
 import com.huce.edu_v2.service.LevelService;
 import com.huce.edu_v2.service.TopicService;
 import com.huce.edu_v2.service.UserService;
@@ -15,7 +21,9 @@ import lombok.experimental.FieldDefaults;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.Arrays;
 import java.util.List;
+import java.util.Map;
 
 @RestController
 @RequestMapping("/words")
@@ -127,4 +135,24 @@ public class WordController {
 				.build();
 	}
 
+	@PostMapping("/checkTest")
+	public ApiResponse<Map<String, Object>> checkTest(@RequestBody List<TestResponse> testResponses){
+		User user = userService.fetchUserByEmail(securityUtil.getCurrentUserLogin().orElse(null));
+		System.out.println(user);
+		return ApiResponse.<Map<String, Object>>builder()
+				.code(HttpStatus.OK.value())
+				.message("check test question")
+				.data(wordService.handleCheckTest(testResponses, user.getId()))
+				.build();
+	}
+
+	@GetMapping("/getTestHistory")
+	public ApiResponse<List<TestHistory>> getTestHistory(){
+		User user = userService.fetchUserByEmail(securityUtil.getCurrentUserLogin().orElse(null));
+		return ApiResponse.<List<TestHistory>>builder()
+				.code(HttpStatus.OK.value())
+				.message("fetch test history")
+				.data(wordService.getTestHistory(user.getId()))
+				.build();
+	}
 }
