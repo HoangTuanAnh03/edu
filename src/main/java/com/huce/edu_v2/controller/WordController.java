@@ -1,19 +1,13 @@
 package com.huce.edu_v2.controller;
 
 import com.huce.edu_v2.dto.ApiResponse;
-import com.huce.edu_v2.dto.response.chat.ConversationResponse;
-import com.huce.edu_v2.dto.response.chat.UserInChat;
 import com.huce.edu_v2.dto.response.test.TestResponse;
 import com.huce.edu_v2.dto.response.word.QuestionResponse;
 import com.huce.edu_v2.entity.TestHistory;
 import com.huce.edu_v2.entity.User;
 import com.huce.edu_v2.entity.Word;
-import com.huce.edu_v2.repository.LevelRepository;
-import com.huce.edu_v2.repository.TopicRepository;
-import com.huce.edu_v2.service.LevelService;
-import com.huce.edu_v2.service.TopicService;
-import com.huce.edu_v2.service.UserService;
-import com.huce.edu_v2.service.WordService;
+import com.huce.edu_v2.entity.WordDict;
+import com.huce.edu_v2.service.*;
 import com.huce.edu_v2.util.SecurityUtil;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
@@ -21,7 +15,6 @@ import lombok.experimental.FieldDefaults;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 
@@ -35,6 +28,7 @@ public class WordController {
 	final LevelService levelService;
 	final UserService userService;
 	final TopicService topicService;
+	final DictionaryService dictionaryService;
 
 	@GetMapping("/getQuestion")
 	public ApiResponse<QuestionResponse> getQuestion(@RequestParam(defaultValue = "0") Integer wid, @RequestParam Integer tid){
@@ -153,6 +147,15 @@ public class WordController {
 				.code(HttpStatus.OK.value())
 				.message("fetch test history")
 				.data(wordService.getTestHistory(user.getId()))
+				.build();
+	}
+
+	@GetMapping("/searchWordInDict")
+	public ApiResponse<List<WordDict>> searchWordInDict(@RequestParam String word){
+		return ApiResponse.<List<WordDict>>builder()
+				.code(HttpStatus.OK.value())
+				.data(dictionaryService.searchWordInDict(word))
+				.message("search word in dictionary")
 				.build();
 	}
 }
