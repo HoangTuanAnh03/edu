@@ -4,6 +4,7 @@ import com.huce.edu_v2.dto.request.chat.MessageRequest;
 import com.huce.edu_v2.dto.response.chat.ChatResponse;
 import com.huce.edu_v2.dto.response.chat.ConversationResponse;
 import com.huce.edu_v2.dto.response.chat.UserResponse;
+import com.huce.edu_v2.dto.response.userChat.ChatResponseForUserChat;
 
 import java.util.List;
 
@@ -17,4 +18,6 @@ public interface ChatService {
 	ChatResponse sendMessageToUser(String userId, MessageRequest messageRequest);
 
 	ChatResponse sendMessageToAdmin(MessageRequest messageRequest);
+
+	List<ChatResponseForUserChat> getMessageByUserId(String userId);
 }
