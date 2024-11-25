@@ -44,6 +44,10 @@ public class UserPointsServiceImpl extends BaseRedisServiceImplV2<String, String
 
 	@Override
 	public Long updateUserPoint(String uid, Long delta) {
+		Integer point = this.hashGet("points", uid);
+		if(point == null){
+			this.hashSet("points", uid, 1000);
+		}
 		return this.hashIncrBy("points", uid, delta);
 	}
 }

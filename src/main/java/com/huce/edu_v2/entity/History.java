@@ -4,6 +4,8 @@ import jakarta.persistence.*;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
 
+import java.time.LocalDateTime;
+
 @Getter
 @Setter
 @Builder
@@ -27,4 +29,12 @@ public class History {
 
 	@Column(name = "iscorrect")
 	Integer iscorrect;
+
+	@Column(name = "datetime")
+	LocalDateTime datetime;
+
+	@PrePersist
+	protected void onCreate() {
+		this.datetime = LocalDateTime.now();
+	}
 }

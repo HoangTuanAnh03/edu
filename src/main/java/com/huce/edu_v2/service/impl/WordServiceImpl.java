@@ -26,6 +26,7 @@ import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
 import java.time.Duration;
+import java.time.LocalDateTime;
 import java.util.*;
 
 @Service
@@ -165,19 +166,19 @@ public class WordServiceImpl implements WordService {
         Word word = wordRepository.findFirstByWid(wid);
         if (word == null) return null;
         History history = historyRepository.findFirstByUidAndWord(uid, word);
-        if (!word.getWord().equals(w)) {
-            if (history == null) {
-                historyRepository.save(new History(0, uid, word, 0));
-            }
-            return false;
-        }
+        boolean isCorrect = word.getWord().equals(w);
         if (history == null) {
-            historyRepository.save(new History(0, uid, word, 1));
+            historyRepository.save(History.builder()
+                    .word(word)
+                    .uid(uid)
+                    .iscorrect(isCorrect ? 1 : 0)
+                    .build());
         } else {
-            history.setIscorrect(1);
+            if(isCorrect) history.setIscorrect(1);
+            history.setDatetime(LocalDateTime.now());
             historyRepository.save(history);
         }
-        return true;
+        return isCorrect;
     }
 
     @Override
