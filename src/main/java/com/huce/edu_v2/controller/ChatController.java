@@ -56,9 +56,13 @@ public class ChatController {
 				.data(user)
 				.build();
 	}
-	@GetMapping("/test")
-	public List<ChatResponseForUserChat> test(){
+	@GetMapping("/getMessagesForUser")
+	public ApiResponse<List<ChatResponseForUserChat>> getMessagesForUser(){
 		User user = userService.fetchUserByEmail(securityUtil.getCurrentUserLogin().orElse(null));
-		return chatService.getMessageByUserId(user.getId());
+		return ApiResponse.<List<ChatResponseForUserChat>>builder()
+				.code(HttpStatus.OK.value())
+				.message("Fetch all user messages")
+				.data(chatService.getMessageByUserId(user.getId()))
+				.build();
 	}
 }
