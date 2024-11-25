@@ -1,7 +1,18 @@
 package com.huce.edu_v2.service;
 
+import com.huce.edu_v2.dto.request.level.LevelCreateRequest;
+import com.huce.edu_v2.dto.request.level.LevelEditRequest;
+import com.huce.edu_v2.dto.request.topic.TopicCreateRequest;
+import com.huce.edu_v2.dto.request.topic.TopicEditRequest;
+import com.huce.edu_v2.dto.response.level.AdminLevelResponse;
+import com.huce.edu_v2.dto.response.level.LevelResponse;
+import com.huce.edu_v2.dto.response.pageable.ResultPaginationDTO;
+import com.huce.edu_v2.dto.response.topic.AdminTopicResponse;
 import com.huce.edu_v2.dto.response.topic.TopicResponse;
+import com.huce.edu_v2.entity.Level;
 import com.huce.edu_v2.entity.Topic;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -9,13 +20,13 @@ import java.util.List;
 public interface TopicService {
 	List<TopicResponse> findTopicsWithProgressAndWordCountByLevelId(Integer lid, String uid);
 
-	Topic findFirstByTid(Integer tid);
+	AdminTopicResponse findById(Integer id);
 
-	Topic add(Integer lid, String name);
+	ResultPaginationDTO getTopics(Specification<Topic> spec, Pageable pageable, int levelId);
 
-	Topic edit(Topic topicEntity);
+	AdminTopicResponse create(TopicCreateRequest request);
 
-	Topic delete(Integer tid);
+	AdminTopicResponse edit(TopicEditRequest request);
 
-	List<Topic> getTopicsByLid(Integer lid);
+	AdminTopicResponse delete(Integer id);
 }

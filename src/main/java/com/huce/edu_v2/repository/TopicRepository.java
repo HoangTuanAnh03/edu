@@ -26,4 +26,6 @@ public interface TopicRepository extends JpaRepository<Topic, Integer>, JpaSpeci
     List<Object[]> findTopicsWithProgressAndWordCountByLevelId(int lid, String uid);
 
     List<Topic> getTopicsByLevel(Level level);
+
+    boolean existsByLevelAndTname(Level level, String topicName);
 }

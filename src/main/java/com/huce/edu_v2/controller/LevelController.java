@@ -76,7 +76,7 @@ public class LevelController {
 	public ApiResponse<AdminLevelResponse> edit(@RequestBody LevelEditRequest request) {
 		return ApiResponse.<AdminLevelResponse>builder()
 				.code(HttpStatus.OK.value())
-				.message("Create levels")
+				.message("Update levels")
 				.data(levelService.edit(request))
 				.build();
 	}
@@ -85,7 +85,7 @@ public class LevelController {
 	public ApiResponse<AdminLevelResponse> delete(@PathVariable Integer id) {
 		return ApiResponse.<AdminLevelResponse>builder()
 				.code(HttpStatus.OK.value())
-				.message("Create levels")
+				.message("Delete levels")
 				.data(levelService.delete(id))
 				.build();
 	}

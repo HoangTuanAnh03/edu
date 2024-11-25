@@ -14,8 +14,6 @@ import java.util.List;
 public interface LevelService {
 	AdminLevelResponse findById(Integer id);
 	
-	Level findFirstByLid(Integer lid);
-
 	List<LevelResponse> findAllLevelsWithProgressForUser(String uid);
 
 	ResultPaginationDTO getLevels(Specification<Level> spec, Pageable pageable);

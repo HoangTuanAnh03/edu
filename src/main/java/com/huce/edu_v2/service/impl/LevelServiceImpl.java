@@ -19,6 +19,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
@@ -38,31 +39,24 @@ public class LevelServiceImpl implements LevelService {
 	}
 
 	@Override
-	public Level findFirstByLid(Integer lid){
-		return levelRepository.findById(lid).orElseThrow(
-				() -> new ResourceNotFoundException("Level", "id", lid)
-		);
-	}
-
-	@Override
 	public List<LevelResponse> findAllLevelsWithProgressForUser(String uid){
 		return levelRepository.findAllLevelsWithProgressForUser(uid).stream().map(LevelResponse::new).toList();
 	}
 
 	@Override
 	public ResultPaginationDTO getLevels(Specification<Level> spec, Pageable pageable) {
-		Page<Level> pRole = this.levelRepository.findAll(spec, pageable);
+		Page<Level> page = this.levelRepository.findAll(spec, pageable);
 
-		List<AdminLevelResponse> levels = pRole.stream().map(
+		List<AdminLevelResponse> levels = page.stream().map(
                 levelMapper::toAdminLevelResponse
 		).toList();
 
 		return ResultPaginationDTO.builder()
 				.meta(Meta.builder()
-						.page(pageable.getPageNumber())
+						.page(pageable.getPageNumber() + 1)
 						.pageSize(pageable.getPageSize())
-						.pages(pRole.getTotalPages())
-						.total(pRole.getTotalElements())
+						.pages(page.getTotalPages())
+						.total(page.getTotalElements())
 						.build())
 				.result(levels)
 				.build();
@@ -81,17 +75,18 @@ public class LevelServiceImpl implements LevelService {
 		return levelMapper.toAdminLevelResponse(newLevel);
 	}
 
+	@Transactional
 	@Override
 	public AdminLevelResponse edit(LevelEditRequest request) {
 		Level level = levelRepository.findById(request.getId()).orElseThrow(
 				() -> new ResourceNotFoundException("Level", "id", request.getId())
 		);
 
-		if (levelRepository.existsByLname(request.getName()))
+		if (!request.getName().equals(level.getLname()) && levelRepository.existsByLname(request.getName()))
 			throw new DuplicateRecordException("Level", "name", request.getName());
 
-		level.setLname(level.getLname());
-		level.setLimage(level.getLimage());
+		level.setLname(request.getName());
+		level.setLimage(request.getImage());
 
 		return levelMapper.toAdminLevelResponse(levelRepository.save(level));
 	}

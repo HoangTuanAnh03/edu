@@ -1,16 +1,22 @@
 package com.huce.edu_v2.controller;
 
 import com.huce.edu_v2.dto.ApiResponse;
+import com.huce.edu_v2.dto.request.topic.TopicCreateRequest;
+import com.huce.edu_v2.dto.request.topic.TopicEditRequest;
+import com.huce.edu_v2.dto.response.pageable.ResultPaginationDTO;
+import com.huce.edu_v2.dto.response.topic.AdminTopicResponse;
 import com.huce.edu_v2.dto.response.topic.TopicResponse;
 import com.huce.edu_v2.entity.Topic;
 import com.huce.edu_v2.entity.User;
-import com.huce.edu_v2.service.LevelService;
 import com.huce.edu_v2.service.TopicService;
 import com.huce.edu_v2.service.UserService;
 import com.huce.edu_v2.util.SecurityUtil;
+import com.turkraft.springfilter.boot.Filter;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.experimental.FieldDefaults;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
@@ -24,7 +30,6 @@ public class TopicController {
 	TopicService topicService;
 	UserService userService;
 	SecurityUtil securityUtil;
-	LevelService levelService;
 
 	@GetMapping("/getByLevel")
 	public ApiResponse<List<TopicResponse>> getByLevel(@RequestParam Integer lid){
@@ -37,31 +42,53 @@ public class TopicController {
 				.build();
 	}
 
-	@PostMapping("/add")
-	public ApiResponse<Topic> add(@RequestParam Integer lid, @RequestParam String tname){
-		levelService.findFirstByLid(lid);
-		return ApiResponse.<Topic>builder()
-				.data(topicService.add(lid, tname))
+	@GetMapping("/{id}")
+	public ApiResponse<AdminTopicResponse> getTopicById(@PathVariable Integer id) {
+		return ApiResponse.<AdminTopicResponse>builder()
 				.code(HttpStatus.OK.value())
-				.message("Add topic successfully")
+				.message("Fetch level by id")
+				.data(topicService.findById(id))
 				.build();
 	}
 
-	@DeleteMapping("/delete")
-	public ApiResponse<Topic> delete(@RequestParam Integer tid){
-		return ApiResponse.<Topic>builder()
-				.data(topicService.delete(tid))
+	@GetMapping("")
+	public ApiResponse<ResultPaginationDTO> getLevels(
+			@Filter Specification<Topic> spec,
+			Pageable pageable,
+			@RequestParam(name = "levelId", required = false, defaultValue = "0") Integer levelId) {
+
+		return ApiResponse.<ResultPaginationDTO>builder()
 				.code(HttpStatus.OK.value())
-				.message("Delete topic successfully")
+				.message("Fetch levels")
+				.data(topicService.getTopics(spec, pageable, levelId))
 				.build();
 	}
 
-	@GetMapping("/getTopicsByLid")
-	public ApiResponse<List<Topic>> getTopicsByLid(@RequestParam Integer lid){
-		return ApiResponse.<List<Topic>>builder()
-				.data(topicService.getTopicsByLid(lid))
+	@PostMapping("")
+	public ApiResponse<AdminTopicResponse> add(@RequestBody TopicCreateRequest request) {
+
+		return ApiResponse.<AdminTopicResponse>builder()
 				.code(HttpStatus.OK.value())
-				.message("Fetch topic successfully")
+				.message("Create levels")
+				.data(topicService.create(request))
+				.build();
+	}
+
+	@PutMapping("")
+	public ApiResponse<AdminTopicResponse> edit(@RequestBody TopicEditRequest request) {
+		return ApiResponse.<AdminTopicResponse>builder()
+				.code(HttpStatus.OK.value())
+				.message("Update levels")
+				.data(topicService.edit(request))
+				.build();
+	}
+
+	@DeleteMapping("/{id}")
+	public ApiResponse<AdminTopicResponse> delete(@PathVariable Integer id) {
+		return ApiResponse.<AdminTopicResponse>builder()
+				.code(HttpStatus.OK.value())
+				.message("Delete levels")
+				.data(topicService.delete(id))
 				.build();
 	}
 }
