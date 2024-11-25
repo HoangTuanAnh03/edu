@@ -3,7 +3,11 @@ package com.huce.edu_v2.controller;
 import com.huce.edu_v2.dto.ApiResponse;
 import com.huce.edu_v2.dto.response.chat.ConversationResponse;
 import com.huce.edu_v2.dto.response.chat.UserResponse;
+import com.huce.edu_v2.dto.response.userChat.ChatResponseForUserChat;
+import com.huce.edu_v2.entity.User;
 import com.huce.edu_v2.service.ChatService;
+import com.huce.edu_v2.service.UserService;
+import com.huce.edu_v2.util.SecurityUtil;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.experimental.FieldDefaults;
@@ -21,6 +25,8 @@ import java.util.List;
 @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
 public class ChatController {
 	ChatService chatService;
+	UserService userService;
+	SecurityUtil securityUtil;
 
 	@GetMapping("/users/getAllUserIdsAndLatestMessage")
 	public ApiResponse<List<UserResponse>> getAllUserIdsAndLatestMessage(){
@@ -48,6 +54,15 @@ public class ChatController {
 				.code(HttpStatus.OK.value())
 				.message("Fetch all message by userid")
 				.data(user)
+				.build();
+	}
+	@GetMapping("/getMessagesForUser")
+	public ApiResponse<List<ChatResponseForUserChat>> getMessagesForUser(){
+		User user = userService.fetchUserByEmail(securityUtil.getCurrentUserLogin().orElse(null));
+		return ApiResponse.<List<ChatResponseForUserChat>>builder()
+				.code(HttpStatus.OK.value())
+				.message("Fetch all user messages")
+				.data(chatService.getMessageByUserId(user.getId()))
 				.build();
 	}
 }

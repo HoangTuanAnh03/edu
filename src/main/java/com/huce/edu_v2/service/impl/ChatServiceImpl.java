@@ -7,6 +7,7 @@ import com.huce.edu_v2.dto.response.chat.ChatResponse;
 import com.huce.edu_v2.dto.response.chat.ConversationResponse;
 import com.huce.edu_v2.dto.response.chat.UserInChat;
 import com.huce.edu_v2.dto.response.chat.UserResponse;
+import com.huce.edu_v2.dto.response.userChat.ChatResponseForUserChat;
 import com.huce.edu_v2.entity.Chat;
 import com.huce.edu_v2.repository.ChatRepository;
 import com.huce.edu_v2.service.ChatService;
@@ -126,5 +127,15 @@ public class ChatServiceImpl implements ChatService {
 				.build());
 
 		return chatMapper.toChatResponse(newChat);
+	}
+
+	@Override
+	@SneakyThrows
+	public List<ChatResponseForUserChat> getMessageByUserId(String userId) {
+		List<Chat> chatMessages = chatRepository.findByUserId(userId);
+		List<Chat> allMessages = new ArrayList<>(chatMessages);
+		List<ChatResponseForUserChat> res = new ArrayList<>();
+		allMessages.forEach(mess -> res.add(chatMapper.toChatResponseForUserChat(mess)));
+		return res;
 	}
 }

@@ -86,6 +86,8 @@ public class SecurityConfiguration {
 
                             .requestMatchers(HttpMethod.GET, "/infoChat/users/getAllUserIdsAndLatestMessage").hasAuthority(PredefinedRole.ROLE_ADMIN)
 
+                            .requestMatchers(HttpMethod.GET, "/statistics/**").hasAuthority(PredefinedRole.ROLE_ADMIN)
+
                             .anyRequest().authenticated())
 
                 .oauth2ResourceServer(oauth2 -> oauth2.jwt(jwtConfigurer -> jwtConfigurer

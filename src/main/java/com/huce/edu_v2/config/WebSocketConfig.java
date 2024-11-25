@@ -34,7 +34,7 @@ public class WebSocketConfig implements WebSocketMessageBrokerConfigurer {
 
     @Override
     public void configureMessageBroker(MessageBrokerRegistry config) {
-        config.enableSimpleBroker("/topic/user", "/topic/admin");
+        config.enableSimpleBroker("/topic/user", "/topic/admin", "/topic/game");
         config.setApplicationDestinationPrefixes("/app");
     }
 
@@ -67,6 +67,7 @@ public class WebSocketConfig implements WebSocketMessageBrokerConfigurer {
                         throw new AppException(ErrorCode.UNAUTHORIZED);
                 } else if (StompCommand.SUBSCRIBE.equals(accessor.getCommand())) {
                     String destination = accessor.getNativeHeader("destination").get(0).toString();
+                    if(destination.startsWith("/topic/game")) return message;
                     SignedJWT signedJWT = verifyToken(accessor);
                     String uid = securityUtil.getUuid(signedJWT);
                     String role = securityUtil.getRole(signedJWT);

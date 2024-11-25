@@ -5,6 +5,9 @@ import com.huce.edu_v2.dto.response.chat.ChatResponse;
 import com.huce.edu_v2.dto.response.chat.ReplyResponse;
 import com.huce.edu_v2.dto.response.chat.UserInChat;
 import com.huce.edu_v2.dto.response.chat.UserResponse;
+import com.huce.edu_v2.dto.response.userChat.ChatResponseForUserChat;
+import com.huce.edu_v2.dto.response.userChat.ReplyResponseForUserChat;
+import com.huce.edu_v2.dto.response.userChat.UserResponseForUserChat;
 import com.huce.edu_v2.entity.Chat;
 import com.huce.edu_v2.entity.User;
 import com.huce.edu_v2.repository.ChatRepository;
@@ -72,5 +75,30 @@ public class ChatMapper {
                 .userName(user.getName())
                 .image(user.getImage())
                 .build();
+    }
+
+    public ChatResponseForUserChat toChatResponseForUserChat(Chat chatMessage){
+        ChatResponseForUserChat dto = new ChatResponseForUserChat();
+        dto.set_id(chatMessage.getId());
+        dto.setText(chatMessage.getMessage());
+        dto.setCreatedAt(chatMessage.getTimestamp());
+        if (chatMessage.getSenderType().equals(SenderType.ADMIN)) {
+            dto.setUser(new UserResponseForUserChat(chatMessage.getAdminId(), "Admin"));
+        }
+        else {
+            User user = userService.fetchUserById(chatMessage.getUserId());
+            dto.setUser(new UserResponseForUserChat(user.getId(), "You"));
+        }
+        if (chatMessage.getReplyId() != null) {
+			chatRepository.findById(chatMessage.getReplyId()).ifPresent(replyMessage -> {
+                boolean isAdmin = replyMessage.getSenderType().equals(SenderType.ADMIN);
+                dto.setReplyTo(new ReplyResponseForUserChat(
+                        replyMessage.getId(),
+                        replyMessage.getMessage(),
+                        new UserResponseForUserChat(isAdmin ? replyMessage.getAdminId() : replyMessage.getUserId(), isAdmin ? "Admin" : "You")
+                ));
+            });
+		}
+        return dto;
     }
 }
