@@ -3,12 +3,15 @@ package com.huce.edu_v2.service.impl;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.huce.edu_v2.advice.exception.ResourceNotFoundException;
+import com.huce.edu_v2.dto.mapper.WordMapper;
+import com.huce.edu_v2.dto.request.word.WordCreateRequest;
+import com.huce.edu_v2.dto.request.word.WordEditRequest;
+import com.huce.edu_v2.dto.response.pageable.Meta;
+import com.huce.edu_v2.dto.response.pageable.ResultPaginationDTO;
 import com.huce.edu_v2.dto.response.test.TestResponse;
+import com.huce.edu_v2.dto.response.word.AdminWordResponse;
 import com.huce.edu_v2.dto.response.word.QuestionResponse;
-import com.huce.edu_v2.entity.History;
-import com.huce.edu_v2.entity.TestHistory;
-import com.huce.edu_v2.entity.User;
-import com.huce.edu_v2.entity.Word;
+import com.huce.edu_v2.entity.*;
 import com.huce.edu_v2.repository.HistoryRepository;
 import com.huce.edu_v2.repository.TestHistoryRepository;
 import com.huce.edu_v2.repository.TopicRepository;
@@ -19,6 +22,9 @@ import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
 import lombok.experimental.NonFinal;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 
 import java.net.URI;
@@ -38,6 +44,7 @@ public class WordServiceImpl implements WordService {
     TopicRepository topicRepository;
     HistoryRepository historyRepository;
     TestHistoryRepository testHistoryRepository;
+    WordMapper wordMapper;
 
     @NonFinal
     @Value("${GROQ_KEY}")
@@ -69,41 +76,6 @@ public class WordServiceImpl implements WordService {
         questionResponse.setAnswers(answers);
         return questionResponse;
     }
-/*
-	@Override
-	public QuestionResponse getQuestion(Integer wid, Integer tid) {
-		Word word = findFirstWordBeforeWid(wid, tid);
-		String prompt = getPrompt(word.getWord());
-		String apiUrl = String.format(API_URL_TEMPLATE, geminiKey);
-
-		HttpHeaders headers = new HttpHeaders();
-		headers.set("Content-Type", "application/json");
-		ObjectNode contentNode = objectMapper.createObjectNode();
-		ObjectNode partsNode = objectMapper.createObjectNode();
-		partsNode.put("text", prompt);
-		contentNode.set("parts", objectMapper.createArrayNode().add(partsNode));
-		ObjectNode requestBodyNode = objectMapper.createObjectNode();
-		requestBodyNode.set("contents", objectMapper.createArrayNode().add(contentNode));
-		String requestBody;
-		try {
-			requestBody = objectMapper.writeValueAsString(requestBodyNode);
-		} catch (Exception e) {
-			return getWordDefault(word);
-		}
-		HttpEntity<String> request = new HttpEntity<>(requestBody, headers);
-		ResponseEntity<String> response = restTemplate.exchange(apiUrl, HttpMethod.POST, request, String.class);
-		try {
-			JsonNode jsonResponse = objectMapper.readTree(response.getBody());
-			String text = jsonResponse.path("candidates").get(0).path("content").path("parts").get(0).path("text").asText().replace("\n", " ").replace("  ", " ");
-			String[] res = text.split(" Choices: a\\) ");
-			String question = res[0].replace("Question: ", "");
-			String[] choices = res[1].replace(",","").split(" [b-d]\\) ");
-			return new QuestionResponse(word.getWid(), question, Arrays.stream(choices).toList());
-		} catch (Exception e) {
-			return getWordDefault(word);
-		}
-	}
-*/
 
     public String getPrompt(String word) {
         String prompt = """
@@ -187,47 +159,8 @@ public class WordServiceImpl implements WordService {
     }
 
     @Override
-    public Word add(Word wordEntity, Integer tid, Integer lid) {
-        if (!topicRepository.findFirstByTid(tid).getLevel().getLid().equals(lid)) {
-            return null;
-        }
-        wordEntity.setWid(0);
-        wordRepository.save(wordEntity);
-        return wordEntity;
-    }
-
-    @Override
-    public Word edit(Word wordEntity) {
-        wordRepository.findById(wordEntity.getWid()).orElseThrow(
-                () -> new ResourceNotFoundException("Word", "id", wordEntity.getWid())
-        );
-        topicRepository.findById(wordEntity.getTopic().getTid()).orElseThrow(
-                () -> new ResourceNotFoundException("Topic", "id", wordEntity.getTopic().getTid())
-        );
-        wordRepository.save(wordEntity);
-        return wordEntity;
-    }
-
-    @Override
-    public Word delete(Integer id) {
-        Word word = wordRepository.findById(id).orElseThrow(
-                () -> new ResourceNotFoundException("Word", "id", id)
-        );
-        wordRepository.delete(word);
-        return word;
-    }
-
-    @Override
     public List<QuestionResponse> getTest(User user) {
-        List<Word> words = wordRepository.findWordsByUserHistory(user.getId());
-        if (words.size() < 10) return null;
-        Collections.shuffle(words);
-        return  words.stream().limit(10).map(this::getWordDefault).toList();
-    }
-
-    @Override
-    public List<Word> findByTid(Integer tid) {
-        return wordRepository.findWordsByTopic(topicRepository.findFirstByTid(tid));
+        return List.of();
     }
 
     @Override
@@ -259,5 +192,104 @@ public class WordServiceImpl implements WordService {
     @Override
     public List<TestHistory> getTestHistory(String uid){
         return testHistoryRepository.findTestHistoriesByUid(uid);
+    }
+
+    @Override
+    public AdminWordResponse findById(Integer id) {
+        Word word = wordRepository.findById(id).orElseThrow(
+                () -> new ResourceNotFoundException("Word", "id", id)
+        );
+
+        return wordMapper.toAdminWordResponse(word);
+    }
+
+    @Override
+    public ResultPaginationDTO getWords(Specification<Word> spec, Pageable pageable, Integer topicId) {
+        Page<Word> page;
+        List<AdminWordResponse> words = new ArrayList<>();
+
+        if (topicId == 0) {
+            page = this.wordRepository.findAll(spec, pageable);
+            words = page.stream()
+                    .map(wordMapper::toAdminWordResponse)
+                    .toList();
+        } else {
+            Topic topic = topicRepository.findById(topicId).orElseThrow(
+                    () -> new ResourceNotFoundException("Topic", "id", topicId)
+            );
+
+            Specification<Word> specification = (root, query, criteriaBuilder) -> criteriaBuilder.equal(root.get("topic"), topic);
+            page = this.wordRepository.findAll(spec.and(specification), pageable);
+            words = page.stream()
+                    .filter(word -> Objects.equals(word.getTopic().getTid(), topicId))
+                    .map(wordMapper::toAdminWordResponse)
+                    .toList();
+        }
+
+        return ResultPaginationDTO.builder()
+                .meta(Meta.builder()
+                        .page(pageable.getPageNumber() + 1)
+                        .pageSize(pageable.getPageSize())
+                        .pages(page.getTotalPages())
+                        .total(page.getTotalElements())
+                        .build())
+                .result(words)
+                .build();
+    }
+
+    @Override
+    public AdminWordResponse create(WordCreateRequest request) {
+        Topic topic = topicRepository.findById(request.getTopicId()).orElseThrow(
+                () -> new ResourceNotFoundException("Topic", "id", request.getTopicId())
+        );
+
+        Word newWord = wordRepository.save(Word.builder()
+                .word(request.getWord())
+                .pronun(request.getPronun())
+                .entype(request.getEntype())
+                .vietype(request.getVietype())
+                .voice(request.getVoice())
+                .photo(request.getPhoto())
+                .meaning(request.getMeaning())
+                .endesc(request.getEndesc())
+                .viedesc(request.getViedesc())
+                .topic(topic)
+                .build());
+
+        return wordMapper.toAdminWordResponse(newWord);
+    }
+
+    @Override
+    public AdminWordResponse edit(WordEditRequest request) {
+        Topic topic = topicRepository.findById(request.getTopicId()).orElseThrow(
+                () -> new ResourceNotFoundException("Topic", "id", request.getTopicId())
+        );
+
+        Word word = wordRepository.findById(request.getId()).orElseThrow(
+                () -> new ResourceNotFoundException("Word", "id", request.getId())
+        );
+
+        word.setWord(request.getWord());
+        word.setPronun(request.getPronun());
+        word.setEntype(request.getEntype());
+        word.setVietype(request.getVietype());
+        word.setVoice(request.getVoice());
+        word.setPhoto(request.getPhoto());
+        word.setMeaning(request.getMeaning());
+        word.setEndesc(request.getEndesc());
+        word.setViedesc(request.getViedesc());
+        word.setTopic(topic);
+
+        return wordMapper.toAdminWordResponse(wordRepository.save(word));
+    }
+
+    @Override
+    public AdminWordResponse delete(Integer id) {
+        Word word = wordRepository.findById(id).orElseThrow(
+                () -> new ResourceNotFoundException("Word", "id", id)
+        );
+
+        wordRepository.delete(word);
+        return null;
     }
 }

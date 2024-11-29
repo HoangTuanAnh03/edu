@@ -131,7 +131,7 @@
                 <version>3.4.1</version>
                 <configuration>
                     <to>
-                        <image>tuananh177/${project.artifactId}:v1.4</image>
+                        <image>tuananh177/${project.artifactId}:v1.6</image>
                     </to>
                 </configuration>
             </plugin>

@@ -1,17 +1,21 @@
 package com.huce.edu_v2.controller;
 
 import com.huce.edu_v2.dto.ApiResponse;
+import com.huce.edu_v2.dto.request.word.WordCreateRequest;
+import com.huce.edu_v2.dto.request.word.WordEditRequest;
+import com.huce.edu_v2.dto.response.pageable.ResultPaginationDTO;
 import com.huce.edu_v2.dto.response.test.TestResponse;
+import com.huce.edu_v2.dto.response.word.AdminWordResponse;
 import com.huce.edu_v2.dto.response.word.QuestionResponse;
-import com.huce.edu_v2.entity.TestHistory;
-import com.huce.edu_v2.entity.User;
-import com.huce.edu_v2.entity.Word;
-import com.huce.edu_v2.entity.WordDict;
+import com.huce.edu_v2.entity.*;
 import com.huce.edu_v2.service.*;
 import com.huce.edu_v2.util.SecurityUtil;
+import com.turkraft.springfilter.boot.Filter;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.experimental.FieldDefaults;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
@@ -87,48 +91,6 @@ public class WordController {
 		return response;
 	}
 
-	@PostMapping("/add")
-	public ApiResponse<Word> add(@RequestBody Word wordEntity, @RequestParam Integer topic, @RequestParam int lid) {
-		Word word = wordService.add(wordEntity, topic, lid);
-		ApiResponse<Word> response = new ApiResponse<>();
-		response.setData(word);
-		response.setCode(HttpStatus.OK.value());
-		if(word == null){
-			response.setCode(HttpStatus.BAD_REQUEST.value());
-			response.setMessage("Add word failed");
-		}else{
-			response.setMessage("Add word successfully");
-		}
-		return response;
-	}
-
-	@PutMapping("/edit")
-	public ApiResponse<Word> edit(@RequestBody Word wordEntity){
-		return ApiResponse.<Word>builder()
-				.code(HttpStatus.OK.value())
-				.message("Edit word successfully")
-				.data(wordService.edit(wordEntity))
-				.build();
-	}
-
-	@DeleteMapping("/delete")
-	public ApiResponse<Word> delete(@RequestParam Integer wid){
-		return ApiResponse.<Word>builder()
-				.message("Delete word successfully")
-				.data(wordService.delete(wid))
-				.code(HttpStatus.OK.value())
-				.build();
-	}
-
-	@GetMapping("/getWordsByTid")
-	public ApiResponse<List<Word>> getAll(@RequestParam int tid) {
-		return ApiResponse.<List<Word>>builder()
-				.code(HttpStatus.OK.value())
-				.message("Fetch word by tid")
-				.data(wordService.findByTid(tid))
-				.build();
-	}
-
 	@PostMapping("/checkTest")
 	public ApiResponse<Map<String, Object>> checkTest(@RequestBody List<TestResponse> testResponses){
 		User user = userService.fetchUserByEmail(securityUtil.getCurrentUserLogin().orElse(null));
@@ -156,6 +118,56 @@ public class WordController {
 				.code(HttpStatus.OK.value())
 				.data(dictionaryService.searchWordInDict(word))
 				.message("search word in dictionary")
+				.build();
+	}
+
+	@GetMapping("/{id}")
+	public ApiResponse<AdminWordResponse> getById(@PathVariable Integer id) {
+		return ApiResponse.<AdminWordResponse>builder()
+				.code(HttpStatus.OK.value())
+				.message("Fetch word by id")
+				.data(wordService.findById(id))
+				.build();
+	}
+
+	@GetMapping("")
+	public ApiResponse<ResultPaginationDTO> getLevels(
+			@Filter Specification<Word> spec,
+			Pageable pageable,
+			@RequestParam(name = "topicId", required = false, defaultValue = "0") Integer topicId
+	) {
+		return ApiResponse.<ResultPaginationDTO>builder()
+				.code(HttpStatus.OK.value())
+				.message("Fetch words")
+				.data(wordService.getWords(spec, pageable, topicId))
+				.build();
+	}
+
+	@PostMapping("")
+	public ApiResponse<AdminWordResponse> add(@RequestBody WordCreateRequest request) {
+
+		return ApiResponse.<AdminWordResponse>builder()
+				.code(HttpStatus.OK.value())
+				.message("Create word successfully")
+				.data(wordService.create(request))
+				.build();
+	}
+
+	@PutMapping("")
+	public ApiResponse<AdminWordResponse> edit(@RequestBody WordEditRequest request) {
+		return ApiResponse.<AdminWordResponse>builder()
+				.code(HttpStatus.OK.value())
+				.message("Update word successfully")
+				.data(wordService.edit(request))
+				.build();
+	}
+
+	@DeleteMapping("/{id}")
+	public ApiResponse<AdminWordResponse> delete(@PathVariable Integer id) {
+		return ApiResponse.<AdminWordResponse>builder()
+				.code(HttpStatus.OK.value())
+				.message("Delete word successfully")
+				.data(wordService.delete(id))
 				.build();
 	}
 }
