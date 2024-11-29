@@ -37,7 +37,7 @@ public class UserPointsServiceImpl extends BaseRedisServiceImplV2<String, String
 				.limit(limit)
 				.map(e -> {
 					User u = userService.fetchUserById(e.getKey());
-					return new UserResponse(u.getName(), u.getImage() == null ? "https://ui-avatars.com/api/?background=random&format=svg&name="+u.getName() : u.getImage(), e.getValue());
+					return new UserResponse(u.getName(), u.getImage() == null ? "https://ui-avatars.com/api/?background=random&format=png&name="+u.getName() : u.getImage(), e.getValue());
 				})
 				.collect(Collectors.toList());
 	}

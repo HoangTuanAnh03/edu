@@ -61,13 +61,13 @@ public class GameController {
 				//USER tham gia lại phòng
 				if (joinResponse.getMessage().equals(GameEnum.USER_IN_OTHER_ROOM)) {
 					simpMessagingTemplate.convertAndSend("/topic/game/" + joinResponse.getRoomId() + "/" + joinResponse.getUid(), roomResponse);
-					sendCounterToUser(gameService.winnerCounter(joinResponse.getRoomId()), joinResponse.getRoomId() + "/" + joinResponse.getUid(), GameEnum.COUNTER);
+					sendCounterToUser(gameService.winnerCounter(joinResponse.getRoomId()), joinResponse.getRoomId(), GameEnum.COUNTER);
 				} else {
 					simpMessagingTemplate.convertAndSend("/topic/game/" + joinResponse.getRoomId(), roomResponse);
 				}
 			}
 
-		}, 1500, TimeUnit.MILLISECONDS);
+		}, 750, TimeUnit.MILLISECONDS);
 		executor.schedule(() -> {
 			if(gameService.quit(joinResponse.getRoomId(), user.getId())){
 				simpMessagingTemplate.convertAndSend(
@@ -114,7 +114,7 @@ public class GameController {
 		User user = userService.fetchUserByEmail(securityUtil.getCurrentUserLogin().orElse(null));
 		Integer point = userPointsService.getUserPoint(user.getId());
 		List<UserResponse> users = userPointsService.getTopUsers(5);
-		users.add(new UserResponse(user.getName(), user.getImage() == null ? "https://ui-avatars.com/api/?background=random&format=svg&name="+user.getName() : user.getImage(), point));
+		users.add(new UserResponse(user.getName(), user.getImage() == null ? "https://ui-avatars.com/api/?background=random&format=png&name="+user.getName() : user.getImage(), point));
 		return users;
 	}
 
@@ -125,8 +125,8 @@ public class GameController {
 	}
 
 	private void sendCounterToUser(Map<String, Map<String, Long>> counter, String roomid, GameEnum status) {
-		String destinationRoom = "/topic/game/" + roomid + "/";
-		simpMessagingTemplate.convertAndSend(destinationRoom + counter.keySet().toArray()[0], RoomResponse.builder().roomId(roomid).message(status).data(counter.values().toArray()[0]).uid(""));
-		simpMessagingTemplate.convertAndSend(destinationRoom + counter.keySet().toArray()[1], RoomResponse.builder().roomId(roomid).message(status).data(counter.values().toArray()[1]).uid(""));
+//		System.out.println(destinationRoom + counter.keySet().toArray()[0]);
+		simpMessagingTemplate.convertAndSend("/topic/game/" + roomid + "/" + counter.keySet().toArray()[0], RoomResponse.builder().roomId(roomid).message(status).data(counter.values().toArray()[0]).uid("").build());
+		simpMessagingTemplate.convertAndSend("/topic/game/" + roomid + "/" + counter.keySet().toArray()[1], RoomResponse.builder().roomId(roomid).message(status).data(counter.values().toArray()[1]).uid("").build());
 	}
 }
