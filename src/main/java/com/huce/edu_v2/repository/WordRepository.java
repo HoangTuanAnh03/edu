@@ -11,7 +11,7 @@ import java.util.List;
 import java.util.Optional;
 
 @Repository
-public interface WordRepository extends JpaRepository<Word, Integer>, JpaSpecificationExecutor<Topic> {
+public interface WordRepository extends JpaRepository<Word, Integer>, JpaSpecificationExecutor<Word> {
     Word findFirstByWid(Integer wid);
 
     @Query(

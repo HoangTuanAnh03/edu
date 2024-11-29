@@ -2,6 +2,7 @@ package com.huce.edu_v2.dto.mapper;
 
 import com.huce.edu_v2.dto.response.topic.AdminTopicResponse;
 import com.huce.edu_v2.entity.Topic;
+import com.huce.edu_v2.entity.Word;
 import com.huce.edu_v2.repository.WordRepository;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
@@ -17,13 +18,14 @@ public class TopicMapper {
 
     public AdminTopicResponse toAdminTopicResponse(Topic topic) {
 
-        Specification<Topic> specification = (root, query, criteriaBuilder) -> criteriaBuilder.equal(root.get("topic"), topic);
+        Specification<Word> specification = (root, query, criteriaBuilder) -> criteriaBuilder.equal(root.get("topic"), topic);
 
         return AdminTopicResponse.builder()
                 .id(topic.getTid())
                 .name(topic.getTname())
                 .numWords(wordRepository.count(specification))
                 .levelId(topic.getLevel().getLid())
+                .levelName(topic.getLevel().getLname())
                 .build();
     }
 }

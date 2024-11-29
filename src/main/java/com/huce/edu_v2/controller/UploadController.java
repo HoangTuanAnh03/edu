@@ -54,4 +54,15 @@ public class UploadController {
                 .data(uploadService.storeImage(image, NameFolders.LEVEL))
                 .build();
     }
+
+    @PostMapping("/word")
+    public ApiResponse<UploadFileResponse> uploadImageWord(
+            @RequestParam(name = "image") MultipartFile image
+    ) {
+        return ApiResponse.<UploadFileResponse>builder()
+                .code(HttpStatus.OK.value())
+                .message("Upload image level success")
+                .data(uploadService.storeImage(image, NameFolders.WORD))
+                .build();
+    }
 }

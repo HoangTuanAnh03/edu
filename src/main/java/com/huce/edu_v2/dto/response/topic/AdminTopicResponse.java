@@ -13,5 +13,6 @@ public class AdminTopicResponse {
 	int id;
 	String name;
 	int levelId;
+	String levelName;
 	long numWords;
 }
