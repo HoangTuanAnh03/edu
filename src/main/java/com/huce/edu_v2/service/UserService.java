@@ -4,6 +4,7 @@ import com.huce.edu_v2.dto.request.user.CreateUserRequest;
 import com.huce.edu_v2.dto.request.auth.PasswordCreationRequest;
 import com.huce.edu_v2.dto.request.user.UpdateUserRequest;
 import com.huce.edu_v2.dto.response.pageable.ResultPaginationDTO;
+import com.huce.edu_v2.dto.response.user.AdminUserResponse;
 import com.huce.edu_v2.dto.response.user.UserResponse;
 import com.huce.edu_v2.entity.User;
 import org.springframework.data.domain.Pageable;
@@ -77,4 +78,6 @@ public interface UserService {
     Boolean forgotPassword(String email);
 
     void setAvatar(String id, String avatar);
+
+    AdminUserResponse getAdminUserById(String id);
 }

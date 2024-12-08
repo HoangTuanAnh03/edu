@@ -160,7 +160,10 @@ public class WordServiceImpl implements WordService {
 
     @Override
     public List<QuestionResponse> getTest(User user) {
-        return List.of();
+        List<Word> words = wordRepository.findWordsByUserHistory(user.getId());
+        if (words.size() < 10) return null;
+        Collections.shuffle(words);
+        return  words.stream().limit(10).map(this::getWordDefault).toList();
     }
 
     @Override

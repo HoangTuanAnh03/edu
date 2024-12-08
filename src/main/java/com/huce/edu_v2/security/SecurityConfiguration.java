@@ -78,9 +78,9 @@ public class SecurityConfiguration {
 
                             .requestMatchers(HttpMethod.GET, "/levels/getAll", "/topics/getByLevel").hasAuthority(PredefinedRole.ROLE_USER)
                             .requestMatchers(HttpMethod.GET, "/levels/*", "/topics/*").hasAuthority(PredefinedRole.ROLE_ADMIN)
-                            .requestMatchers(HttpMethod.POST, "/levels", "/topics").hasAuthority(PredefinedRole.ROLE_ADMIN)
-                            .requestMatchers(HttpMethod.PUT, "/levels", "/topics").hasAuthority(PredefinedRole.ROLE_ADMIN)
-                            .requestMatchers(HttpMethod.DELETE, "/levels/*", "/topics/*").hasAuthority(PredefinedRole.ROLE_ADMIN)
+                            .requestMatchers(HttpMethod.POST, "/levels", "/topics", "/words").hasAuthority(PredefinedRole.ROLE_ADMIN)
+                            .requestMatchers(HttpMethod.PUT, "/levels", "/topics","/words").hasAuthority(PredefinedRole.ROLE_ADMIN)
+                            .requestMatchers(HttpMethod.DELETE, "/levels/*", "/topics/*", "/words/*").hasAuthority(PredefinedRole.ROLE_ADMIN)
 
                             .requestMatchers(HttpMethod.POST, "/upload/*").authenticated()
 

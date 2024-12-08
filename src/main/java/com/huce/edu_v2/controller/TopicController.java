@@ -46,20 +46,20 @@ public class TopicController {
 	public ApiResponse<AdminTopicResponse> getTopicById(@PathVariable Integer id) {
 		return ApiResponse.<AdminTopicResponse>builder()
 				.code(HttpStatus.OK.value())
-				.message("Fetch level by id")
+				.message("Fetch topic by id")
 				.data(topicService.findById(id))
 				.build();
 	}
 
 	@GetMapping("")
-	public ApiResponse<ResultPaginationDTO> getLevels(
+	public ApiResponse<ResultPaginationDTO> getTopics(
 			@Filter Specification<Topic> spec,
 			Pageable pageable,
 			@RequestParam(name = "levelId", required = false, defaultValue = "0") Integer levelId) {
 
 		return ApiResponse.<ResultPaginationDTO>builder()
 				.code(HttpStatus.OK.value())
-				.message("Fetch levels")
+				.message("Fetch topic")
 				.data(topicService.getTopics(spec, pageable, levelId))
 				.build();
 	}
@@ -69,7 +69,7 @@ public class TopicController {
 
 		return ApiResponse.<AdminTopicResponse>builder()
 				.code(HttpStatus.OK.value())
-				.message("Create levels")
+				.message("Create topic successfully")
 				.data(topicService.create(request))
 				.build();
 	}
@@ -78,7 +78,7 @@ public class TopicController {
 	public ApiResponse<AdminTopicResponse> edit(@RequestBody TopicEditRequest request) {
 		return ApiResponse.<AdminTopicResponse>builder()
 				.code(HttpStatus.OK.value())
-				.message("Update levels")
+				.message("Update topic successfully")
 				.data(topicService.edit(request))
 				.build();
 	}
@@ -87,7 +87,7 @@ public class TopicController {
 	public ApiResponse<AdminTopicResponse> delete(@PathVariable Integer id) {
 		return ApiResponse.<AdminTopicResponse>builder()
 				.code(HttpStatus.OK.value())
-				.message("Delete levels")
+				.message("Delete topic successfully")
 				.data(topicService.delete(id))
 				.build();
 	}

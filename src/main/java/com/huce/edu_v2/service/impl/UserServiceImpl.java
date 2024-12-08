@@ -11,6 +11,7 @@ import com.huce.edu_v2.dto.request.user.CreateUserRequest;
 import com.huce.edu_v2.dto.request.user.UpdateUserRequest;
 import com.huce.edu_v2.dto.response.pageable.Meta;
 import com.huce.edu_v2.dto.response.pageable.ResultPaginationDTO;
+import com.huce.edu_v2.dto.response.user.AdminUserResponse;
 import com.huce.edu_v2.dto.response.user.UserResponse;
 import com.huce.edu_v2.entity.Role;
 import com.huce.edu_v2.entity.User;
@@ -99,14 +100,12 @@ public class UserServiceImpl implements UserService {
         return this.userMapper.toUserResponse(user);
     }
 
-    @PreAuthorize("hasRole('ADMIN')")
     @Override
     public ResultPaginationDTO fetchAllUser(Specification<User> spec, Pageable pageable) {
         Page<User> pageUser = this.userRepository.findAll(spec, pageable);
 
-        // remove sensitive data
-        List<UserResponse> listUser = pageUser.getContent()
-                .stream().map(this.userMapper::toUserResponse)
+        List<AdminUserResponse> listUser = pageUser.getContent()
+                .stream().map(this.userMapper::toAdminUserResponse)
                 .collect(Collectors.toList());
 
         return ResultPaginationDTO.builder()
@@ -236,5 +235,13 @@ public class UserServiceImpl implements UserService {
 
         user.setImage(avatar);
         userRepository.save(user);
+    }
+
+    @Override
+    public AdminUserResponse getAdminUserById(String id) {
+        User user = userRepository.findByIdAndActive(id, true).orElseThrow(
+                () -> new AppException(ErrorCode.USER_NOT_EXISTED)
+        );
+        return userMapper.toAdminUserResponse(user);
     }
 }

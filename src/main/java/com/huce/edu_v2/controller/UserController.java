@@ -5,13 +5,19 @@ import com.huce.edu_v2.dto.request.auth.ForgotPasswordRequest;
 import com.huce.edu_v2.dto.request.auth.PasswordCreationRequest;
 import com.huce.edu_v2.dto.request.user.UpdateUserRequest;
 import com.huce.edu_v2.dto.response.auth.AuthenticationResponse;
+import com.huce.edu_v2.dto.response.pageable.ResultPaginationDTO;
+import com.huce.edu_v2.dto.response.user.AdminUserResponse;
 import com.huce.edu_v2.dto.response.user.UserResponse;
+import com.huce.edu_v2.entity.User;
 import com.huce.edu_v2.service.UserService;
 import com.huce.edu_v2.util.constant.AppConstants;
+import com.turkraft.springfilter.boot.Filter;
 import jakarta.validation.Valid;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.experimental.FieldDefaults;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
@@ -49,17 +55,26 @@ public class UserController {
                 .build();
     }
 
-//    @GetMapping("")
-//    public ApiResponse<ResultPaginationDTO> getAllUser(
-//            @Filter Specification<User> spec,
-//            Pageable pageable) {
-//
-//        return ApiResponse.<ResultPaginationDTO>builder()
-//                .code(HttpStatus.OK.value())
-//                .message("Fetch all users")
-//                .data(this.userService.fetchAllUser(spec, pageable))
-//                .build();
-//    }
+    @GetMapping("")
+    public ApiResponse<ResultPaginationDTO> getAllUser(
+            @Filter Specification<User> spec,
+            Pageable pageable) {
+
+        return ApiResponse.<ResultPaginationDTO>builder()
+                .code(HttpStatus.OK.value())
+                .message("Fetch users")
+                .data(this.userService.fetchAllUser(spec, pageable))
+                .build();
+    }
+
+    @GetMapping("/{id}")
+    public ApiResponse<AdminUserResponse> getById(@PathVariable("id") String id) {
+        return ApiResponse.<AdminUserResponse>builder()
+                .code(HttpStatus.OK.value())
+                .message("Fetch user by id")
+                .data(this.userService.getAdminUserById(id))
+                .build();
+    }
 
 
     @PutMapping("/{id}")
