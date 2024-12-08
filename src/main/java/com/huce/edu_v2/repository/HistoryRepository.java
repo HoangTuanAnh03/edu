@@ -28,4 +28,6 @@ public interface HistoryRepository extends JpaRepository<History, Integer>, JpaS
 			"AND DATE(h.datetime) BETWEEN (SELECT start FROM week) AND (SELECT end FROM week) " +
 			"GROUP BY l.lid ", nativeQuery = true)
 	List<Object[]> statisticsLevel();
+
+	List<History> findByUid(String uid);
 }

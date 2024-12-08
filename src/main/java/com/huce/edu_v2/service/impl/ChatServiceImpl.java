@@ -138,4 +138,17 @@ public class ChatServiceImpl implements ChatService {
 		allMessages.forEach(mess -> res.add(chatMapper.toChatResponseForUserChat(mess)));
 		return res;
 	}
+
+	@Override
+	public ChatResponse sendMessageBot(String userId, String newMessage, Long replyId) {
+		Chat chat = chatRepository.save(Chat.builder()
+				.senderType(SenderType.ADMIN)
+				.userId(userId)
+				.adminId("0")
+				.message(newMessage)
+				.status(ChatStatusEnum.SENT)
+				.replyId(replyId)
+				.build());
+		return chatMapper.toChatResponse(chat);
+	}
 }

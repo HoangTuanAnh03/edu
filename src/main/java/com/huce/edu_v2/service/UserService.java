@@ -9,6 +9,8 @@ import com.huce.edu_v2.entity.User;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
 
+import java.util.Map;
+
 public interface UserService {
     /**
      * @param email - Input email
@@ -77,4 +79,6 @@ public interface UserService {
     Boolean forgotPassword(String email);
 
     void setAvatar(String id, String avatar);
+
+    Map<String, Integer> getOtherData();
 }

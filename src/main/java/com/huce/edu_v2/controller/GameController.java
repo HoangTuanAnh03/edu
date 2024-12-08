@@ -67,7 +67,7 @@ public class GameController {
 				}
 			}
 
-		}, 750, TimeUnit.MILLISECONDS);
+		}, 1500, TimeUnit.MILLISECONDS);
 		executor.schedule(() -> {
 			if(gameService.quit(joinResponse.getRoomId(), user.getId())){
 				simpMessagingTemplate.convertAndSend(
@@ -80,7 +80,7 @@ public class GameController {
 								.build()
 				);
 			}
-		}, 25*1000,TimeUnit.MILLISECONDS);
+		}, 10*1000,TimeUnit.MILLISECONDS);
 		executor.shutdown();
 		//return roomId
 		Map<String, String> res = new HashMap<>();

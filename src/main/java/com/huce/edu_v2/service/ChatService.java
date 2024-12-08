@@ -20,4 +20,6 @@ public interface ChatService {
 	ChatResponse sendMessageToAdmin(MessageRequest messageRequest);
 
 	List<ChatResponseForUserChat> getMessageByUserId(String userId);
+
+	ChatResponse sendMessageBot(String userId, String newMessage, Long replyId);
 }

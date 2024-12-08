@@ -186,7 +186,7 @@ public class GameServiceImpl implements GameService {
 		if(room != null){
 			if(room.getPlayer1Id().equals(uid) && room.getPlayer2Id().isEmpty()){
 				rooms.remove(roomId);
-				queue.clear();
+				queue.remove(uid);
 				return true;
 			}
 		}
