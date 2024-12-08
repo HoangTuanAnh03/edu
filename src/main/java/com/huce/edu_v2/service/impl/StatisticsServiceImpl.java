@@ -21,8 +21,10 @@ import java.io.OutputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.time.DayOfWeek;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
+import java.time.temporal.TemporalAdjusters;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
@@ -42,7 +44,8 @@ public class StatisticsServiceImpl implements StatisticsService {
 		Map<String, Long> result = new HashMap<>();
 		result.put("correct", 0L);
 		result.put("incorrect", 0L);
-		historyRepository.getWeekHistory().stream()
+		Map<String, String> weekDay = getWeekDay();
+		historyRepository.getWeekHistory(weekDay.get("start"), weekDay.get("end")).stream()
 				.collect(Collectors.groupingBy(History::getIscorrect, Collectors.counting()))
 				.forEach((key, value) -> result.put(key == 0 ? "incorrect" : "correct", value));
 		return result;
@@ -50,8 +53,8 @@ public class StatisticsServiceImpl implements StatisticsService {
 
 	@Override
 	public List<Object[]> statisticsWeeklyAnswerByLevel() {
-		System.out.println(historyRepository.statisticsLevel());
-		return historyRepository.statisticsLevel();
+		Map<String, String> weekDay = getWeekDay();
+		return historyRepository.statisticsLevel(weekDay.get("start"), weekDay.get("end"));
 	}
 
 	@Override
@@ -121,5 +124,15 @@ public class StatisticsServiceImpl implements StatisticsService {
 		renderer.layout();
 		renderer.createPDF(outputStream);
 		outputStream.close();
+	}
+
+	public Map<String, String> getWeekDay(){
+		LocalDate today = LocalDate.now();
+		LocalDate start = today.with(TemporalAdjusters.previousOrSame(DayOfWeek.MONDAY));
+		LocalDate end = today.with(TemporalAdjusters.nextOrSame(DayOfWeek.SUNDAY));
+		Map<String, String> res = new HashMap<>();
+		res.put("start", start.toString());
+		res.put("end", end.toString());
+		return res;
 	}
 }
