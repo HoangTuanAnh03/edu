@@ -111,7 +111,7 @@ public class WordServiceImpl implements WordService {
                 .uri(URI.create("https://api.groq.com/openai/v1/chat/completions"))
                 .header("Content-Type", "application/json")
                 .header("Authorization", "Bearer " + groqKey)
-                .timeout(Duration.ofMillis(500))
+                .timeout(Duration.ofMillis(600))
                 .POST(HttpRequest.BodyPublishers.ofString(body))
                 .build();
         var client = HttpClient.newHttpClient();

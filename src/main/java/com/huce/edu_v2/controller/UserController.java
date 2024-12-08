@@ -9,7 +9,9 @@ import com.huce.edu_v2.dto.response.pageable.ResultPaginationDTO;
 import com.huce.edu_v2.dto.response.user.AdminUserResponse;
 import com.huce.edu_v2.dto.response.user.UserResponse;
 import com.huce.edu_v2.entity.User;
+import com.huce.edu_v2.service.UserPointsService;
 import com.huce.edu_v2.service.UserService;
+import com.huce.edu_v2.util.SecurityUtil;
 import com.huce.edu_v2.util.constant.AppConstants;
 import com.turkraft.springfilter.boot.Filter;
 import jakarta.validation.Valid;
@@ -21,12 +23,18 @@ import org.springframework.data.jpa.domain.Specification;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.Map;
+
+import java.util.Map;
+
 @RestController
 @RequestMapping("/users")
 @AllArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
 public class UserController {
     UserService userService;
+    UserPointsService userPointsService;
+    SecurityUtil securityUtil;
 
     @PostMapping("/create-password")
     public ApiResponse<?> createPassword(@RequestBody @Valid PasswordCreationRequest request) {
@@ -52,6 +60,18 @@ public class UserController {
                 .code(HttpStatus.OK.value())
                 .message("Fetch my info")
                 .data(this.userService.fetchMyInfo())
+                .build();
+    }
+
+    @GetMapping("/my-info/other-data")
+    public ApiResponse<Map<String, Integer>> getOtherData(){
+        Map<String, Integer> result = userService.getOtherData();
+        User user = userService.fetchUserByEmail(securityUtil.getCurrentUserLogin().orElse(null));
+        result.put("points", userPointsService.getUserPoint(user.getId()));
+        return ApiResponse.<Map<String, Integer>>builder()
+                .code(HttpStatus.OK.value())
+                .message("Fetch my info")
+                .data(result)
                 .build();
     }
 

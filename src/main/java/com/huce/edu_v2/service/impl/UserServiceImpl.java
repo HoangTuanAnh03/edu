@@ -16,8 +16,10 @@ import com.huce.edu_v2.dto.response.user.UserResponse;
 import com.huce.edu_v2.entity.Role;
 import com.huce.edu_v2.entity.User;
 import com.huce.edu_v2.entity.VerificationCode;
+import com.huce.edu_v2.repository.HistoryRepository;
 import com.huce.edu_v2.repository.RoleRepository;
 import com.huce.edu_v2.repository.UserRepository;
+import com.huce.edu_v2.repository.WordRepository;
 import com.huce.edu_v2.service.UserService;
 import com.huce.edu_v2.service.VerifyCodeService;
 import com.huce.edu_v2.util.SecurityUtil;
@@ -54,6 +56,8 @@ public class UserServiceImpl implements UserService {
     UserMapper userMapper;
     SecurityUtil securityUtil;
     KafkaTemplate<String, Object> kafkaTemplate;
+    HistoryRepository historyRepository;
+    WordRepository wordRepository;
 
     @Override
     public boolean isEmailExistAndActive(String email) {
@@ -225,6 +229,15 @@ public class UserServiceImpl implements UserService {
                 .email(email)
                 .exp(LocalDateTime.now()).build());
         return true;
+    }
+
+    @Override
+    public Map<String, Integer> getOtherData() {
+        Map<String, Integer> result = new HashMap<>();
+        User user = this.fetchUserByEmail(securityUtil.getCurrentUserLogin().orElse(null));
+        result.put("progress_history", historyRepository.findByUid(user.getId()).size());
+        result.put("progress_all", wordRepository.findAll().size());
+        return result;
     }
 
     @Override

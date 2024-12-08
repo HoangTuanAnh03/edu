@@ -169,7 +169,7 @@ public class GameServiceImpl implements GameService {
 
 		info.put("YOU", toUserResponse(userService.fetchUserById(room.getPlayer1Id()), userPointsService.getUserPoint(room.getPlayer1Id())));
 		info.put("COMPETITOR", null);
-
+		result.put(room.getPlayer1Id(), new HashMap<>(info));
 		if(!room.getPlayer2Id().isEmpty()){
 			info.put("COMPETITOR", toUserResponse(userService.fetchUserById(room.getPlayer2Id()), userPointsService.getUserPoint(room.getPlayer2Id())));
 			result.put(room.getPlayer1Id(), new HashMap<>(info));
@@ -177,7 +177,6 @@ public class GameServiceImpl implements GameService {
 			info.put("YOU", info.put("COMPETITOR", info.get("YOU")));
 			result.put(room.getPlayer2Id(), new HashMap<>(info));
 		}
-		result.put(room.getPlayer1Id(), new HashMap<>(info));
 		return result;
 	}
 
@@ -187,7 +186,7 @@ public class GameServiceImpl implements GameService {
 		if(room != null){
 			if(room.getPlayer1Id().equals(uid) && room.getPlayer2Id().isEmpty()){
 				rooms.remove(roomId);
-				queue.clear();
+				queue.remove(uid);
 				return true;
 			}
 		}
@@ -195,6 +194,6 @@ public class GameServiceImpl implements GameService {
 	}
 
 	UserResponse toUserResponse(User user, Integer point){
-		return new UserResponse(user.getName(), user.getImage() == null ? "https://ui-avatars.com/api/?background=random&format=svg&name="+user.getName() : user.getImage(), point);
+		return new UserResponse(user.getName(), user.getImage() == null ? "https://ui-avatars.com/api/?background=random&format=png&name="+user.getName() : user.getImage(), point);
 	}
 }

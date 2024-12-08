@@ -10,6 +10,8 @@ import com.huce.edu_v2.entity.User;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
 
+import java.util.Map;
+
 public interface UserService {
     /**
      * @param email - Input email
@@ -80,4 +82,6 @@ public interface UserService {
     void setAvatar(String id, String avatar);
 
     AdminUserResponse getAdminUserById(String id);
+
+    Map<String, Integer> getOtherData();
 }

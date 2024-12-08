@@ -63,7 +63,11 @@ VALUES
 
     ('e692cd89-e09e-4651-afb8-8956d349ff6a', '2024-07-25 16:55:14.000000', 'anonymousUser', NULL, NULL, 'string',
      '2003-07-17', 'admin@gmail.com', 'FEMALE', NULL, 'ADMIN',
-     '$2a$10$EJkL.sXN6Tg.NHzrmTk7DeWJf2lO/QYAJk7x7S41T4iHlgfimeUQu', 3, 1);
+     '$2a$10$EJkL.sXN6Tg.NHzrmTk7DeWJf2lO/QYAJk7x7S41T4iHlgfimeUQu', 3, 1),
+
+     ('0', '2024-11-29 14:29:09.000000', 'anonymousUser', NULL, NULL, 'string',
+     '2003-09-19', 'bot@gmail.com', 'FEMALE', NULL, 'ADMIN',
+     'botbotbotbot', 3, 1);
 
 
 create table IF NOT EXISTS verification_code
